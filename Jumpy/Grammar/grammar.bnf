@@ -45,7 +45,8 @@ operator : PLUS | MINUS | TIMES | DIVIDE
 #4 int result = 1
 #4 int check = 0
 #5 check = (i/power) // 0 if i < power
-#6 jmp check*2+1 // jump either 1 or 3 lines
+#6 jmp check*3+1 // jump either 1 or 4 lines
 #7 result = result*base
-#8 jmp -3 // to line 5
-#9 println result
+#8 i = i + 1
+#9 jmp -4 // to line 5
+#10 println result
