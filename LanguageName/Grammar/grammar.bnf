@@ -2,6 +2,9 @@
 # Created by Matthew Spillman, Westminster Schools
 # Atlanta, GA
 # Spring 2020
+# The language has no conditional or loop keywords, just jmp x and jmpabs x statements
+# which jump the program x lines ahead or to line x.
+# I think this would be turing-complete when combining jmp statements with integer division
 
 program : statementList
 
@@ -15,7 +18,7 @@ variableAssignment: VARIABLE EQUALS expression NEWLINE
 
 variableType : INT # may add more
 
-jumpStatement : JMP expression | JMPABS expression NEWLINE
+jumpStatement : JMP expression NEWLINE | JMPABS expression NEWLINE
 
 printStatement : PRINTLN expression NEWLINE
 
@@ -24,9 +27,6 @@ expression : unary | unary operator expression
 unary : VARIABLE | NUMBER | MINUS unary | OPAREN expression CPAREN
 
 operator : PLUS | MINUS | TIMES | DIVIDE
-
-# The language has no conditional or loop keywords, just jmp x and jmpabs x statements
-# which jump the program x lines ahead or to line x.
 
 # Example program to print the numbers from 0 to 99 then print -1
 #1 int i = 0
@@ -39,4 +39,13 @@ operator : PLUS | MINUS | TIMES | DIVIDE
 #8 println -1
 
 # Example program to raise an integer base to an integer power
-#1 
+#1 int base = 3
+#2 int power = 3
+#3 int i = 0
+#4 int result = 1
+#4 int check = 0
+#5 check = (i/power) // 0 if i < power
+#6 jmp check*2+1 // jump either 1 or 3 lines
+#7 result = result*base
+#8 jmp -3 // to line 5
+#9 println result
