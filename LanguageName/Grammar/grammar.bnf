@@ -2,3 +2,13 @@
 # Created by Matthew Spillman, Westminster Schools
 # Atlanta, GA
 # Spring 2020
+
+# Example program to print the numbers from 0 to 99 then print "done"
+# int i = 0
+# int check = 0
+# check = (i/100) // integer casting to 0 if i<100 and 1 if 100<i<200
+# jmp check*3+1 // jump either 4 or 1 lines ahead
+# println(i)
+# i = i + 1
+# jmp -4 // to line 8
+# println("done")
