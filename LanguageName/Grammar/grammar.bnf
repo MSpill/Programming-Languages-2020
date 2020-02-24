@@ -3,6 +3,10 @@
 # Atlanta, GA
 # Spring 2020
 
+program : statementList
+
+statementList : statement | statement NEWLINE statementList
+
 # Example program to print the numbers from 0 to 99 then print "done"
 # int i = 0
 # int check = 0
