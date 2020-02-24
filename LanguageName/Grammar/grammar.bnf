@@ -7,12 +7,36 @@ program : statementList
 
 statementList : statement | statement NEWLINE statementList
 
-# Example program to print the numbers from 0 to 99 then print "done"
-# int i = 0
-# int check = 0
-# check = (i/100) // integer casting to 0 if i<100 and 1 if 100<i<200
-# jmp check*3+1 // jump either 4 or 1 lines ahead
-# println(i)
-# i = i + 1
-# jmp -4 // to line 8
-# println("done")
+statement : variableDeclaration | variableAssignment | jumpStatement | printStatement
+
+variableDeclaration : variableType variableAssignment
+
+variableAssignment: VARIABLE EQUALS expression NEWLINE
+
+variableType : INT # may add more
+
+jumpStatement : JMP expression | JMPABS expression NEWLINE
+
+printStatement : PRINTLN expression NEWLINE
+
+expression : unary | unary operator expression
+
+unary : VARIABLE | NUMBER | MINUS unary | OPAREN expression CPAREN
+
+operator : PLUS | MINUS | TIMES | DIVIDE
+
+# The language has no conditional or loop keywords, just jmp x and jmpabs x statements
+# which jump the program x lines ahead or to line x.
+
+# Example program to print the numbers from 0 to 99 then print -1
+#1 int i = 0
+#2 int check = 0
+#3 check = (i/100) // integer casts to 0 if i<100 and 1 if 99<i<200
+#4 jmp check*3+1 // jump either 4 or 1 lines ahead
+#5 println i
+#6 i = i + 1
+#7 jmp -4 // to line 3
+#8 println -1
+
+# Example program to raise an integer base to an integer power
+#1 
