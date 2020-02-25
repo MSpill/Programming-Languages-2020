@@ -14,4 +14,14 @@ class Lexer {
         }
     }
 
+    Lexeme lex() throws IOException {
+        /*
+         * skipWhiteSpace(); char c = (char) input.read();
+         * 
+         * if (isEndOfInput(c)) { System.out.println("End of input reached."); return
+         * new Lexeme(Type.END_OF_INPUT); }
+         */
+        return null;
+    }
+
 }
