@@ -8,25 +8,37 @@
 
 program : statementList
 
-statementList : statement | statement NEWLINE statementList
+statementList   : statement 
+                | statement NEWLINE statementList
 
-statement : variableDeclaration | variableAssignment | jumpStatement | printStatement
+statement   : variableDeclaration 
+            | variableAssignment 
+            | jumpStatement 
+            | printStatement
 
 variableDeclaration : variableType variableAssignment
 
-variableAssignment: VARIABLE EQUALS expression NEWLINE
+variableAssignment : VARIABLE EQUALS expression NEWLINE
 
 variableType : INT # may add more
 
-jumpStatement : JMP expression NEWLINE | JMPABS expression NEWLINE
+jumpStatement   : JMP expression NEWLINE 
+                | JMPABS expression NEWLINE
 
 printStatement : PRINTLN expression NEWLINE
 
-expression : unary | unary operator expression
+expression  : unary 
+            | unary operator expression
 
-unary : VARIABLE | NUMBER | MINUS unary | OPAREN expression CPAREN
+unary   : VARIABLE 
+        | NUMBER 
+        | MINUS unary 
+        | OPAREN expression CPAREN
 
-operator : PLUS | MINUS | TIMES | DIVIDE
+operator    : PLUS 
+            | MINUS 
+            | TIMES 
+            | DIVIDE
 
 # Example program to print the numbers from 0 to 99 then print -1
 #1 int i = 0
