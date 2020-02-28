@@ -4,12 +4,16 @@
 # Spring 2020
 # The language has no conditional or loop keywords, just jmp x and jmpabs x statements
 # which jump the program x lines ahead or to line x.
+# newlines are built in as the terminators of statements
 # I think this would be turing-complete when combining jmp statements with integer division
 
-program : statementList
+program : optNewLines statementList
 
 statementList   : statement 
-                | statement NEWLINE statementList
+                | statement optNewLines statementList
+
+optNewLines : empty
+            | NEWLINE optNewLines
 
 statement   : variableDeclaration 
             | variableAssignment 
