@@ -8,6 +8,21 @@ class Lexeme {
         this.type = t;
     }
 
+    Lexeme(Types t, String string) {
+        this.type = t;
+        this.string = string;
+    }
+
+    Lexeme(Types t, int integer) {
+        this.type = t;
+        this.integer = new Integer(integer);
+    }
+
+    Lexeme(Types t, double real) {
+        this.type = t;
+        this.real = new Double(real);
+    }
+
     Types getType() {
         return this.type;
     }

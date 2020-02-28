@@ -15,32 +15,83 @@ class Lexer {
     }
 
     Lexeme lex() throws IOException {
-        skipWhiteSpace();
-        char ch = input.read();
-        if (ch == -1) { // check for end of file
-            return new Lexeme(Types.END_OF_INPUT);
-        }
+        try {
+            skipWhiteSpace();
+            int charAsInt = input.read();
+            if (charAsInt == 65535) { // check for end of file
+                return new Lexeme(Types.END_OF_INPUT);
+            }
+            char ch = (char)charAsInt;
 
-        switch (ch) {
-            case '\n': return new Lexeme(Types.NEWLINE);
-            case '=': return new Lexeme(Types.EQUALS);
-            case '+': return new Lexeme(Types.PLUS);
-            case '-': return new Lexeme(Types.MINUS);
-            case '*': return new Lexeme(Types.TIMES);
-            case '/': return new Lexeme(Types.DIVIDE);
-            case '(': return new Lexeme(Types.OPAREN);
-            case ')': return new Lexeme(Types.CPAREN);
-            default:
-                if (Character.isDigit(ch)) {
-                    input.unread(ch);
-                    return lexNumber();
-                } else if (Character.isLetter(ch)) {
-                    input.unread(ch);
-                    return lexVariableOrKeyword();
-                } else {
-                    System.out.println("Unknown character encountered while lexing: " + ch);
-                    return new Lexeme(Types.UNKNOWN);
-                }
+            switch (ch) {
+                case '\n': return new Lexeme(Types.NEWLINE);
+                case '=': return new Lexeme(Types.EQUALS);
+                case '+': return new Lexeme(Types.PLUS);
+                case '-': return new Lexeme(Types.MINUS);
+                case '*': return new Lexeme(Types.TIMES);
+                case '/': return new Lexeme(Types.DIVIDE);
+                case '(': return new Lexeme(Types.OPAREN);
+                case ')': return new Lexeme(Types.CPAREN);
+                default:
+                    if (Character.isDigit(ch)) {
+                        input.unread(ch);
+                        return lexNumber();
+                    } else if (Character.isLetter(ch)) {
+                        input.unread(ch);
+                        return lexVariableOrKeyword();
+                    } else {
+                        //System.out.println("Unknown character encountered while lexing: " + ch);
+                        return new Lexeme(Types.UNKNOWN);
+                    }
+            }
+        } catch (IOException e) {
+            System.out.println("Error while lexing: " + e);
+            return new Lexeme(Types.UNKNOWN);
+        }
+    }
+
+    private Lexeme lexNumber() {
+        try {
+            String token = "";
+            char ch = (char)input.read();
+            while (Character.isDigit(ch)) {
+                token = token + ch;
+                ch = (char)input.read();
+            }
+
+            input.unread(ch);
+            return new Lexeme(Types.NUMBER, Integer.parseInt(token));
+        } catch (IOException e) {
+            System.out.println("Error while lexing number: " + e);
+            return new Lexeme(Types.UNKNOWN);
+        }
+    }
+
+    private Lexeme lexVariableOrKeyword() {
+        try {
+            String token = "";
+            char ch = (char)input.read();
+            while (Character.isDigit(ch) || Character.isLetter(ch)) {
+                token = token + ch;
+                ch = (char)input.read();
+            }
+
+            input.unread(ch);
+
+            if (token.equals("jmp")) {
+                return new Lexeme (Types.JMP);
+            } else if (token.equals("jmpabs")) {
+                return new Lexeme (Types.JMPABS);
+            } else if (token.equals("println")) {
+                return new Lexeme (Types.PRINTLN);
+            } else if (token.equals("int")) {
+                return new Lexeme (Types.INT);
+            } else {
+                return new Lexeme (Types.VARIABLE, token);
+            }
+        } catch (IOException e) {
+            System.out.println("Error while lexing variable/keyword: " + e);
+            return new Lexeme(Types.UNKNOWN);
         }
     }
 
