@@ -16,9 +16,32 @@ class Lexer {
 
     Lexeme lex() throws IOException {
         skipWhiteSpace();
-        char c = (char) input.read();
-        System.out.println(c);
-        return new Lexeme(Types.END_OF_INPUT);
+        char ch = input.read();
+        if (ch == -1) { // check for end of file
+            return new Lexeme(Types.END_OF_INPUT);
+        }
+
+        switch (ch) {
+            case '\n': return new Lexeme(Types.NEWLINE);
+            case '=': return new Lexeme(Types.EQUALS);
+            case '+': return new Lexeme(Types.PLUS);
+            case '-': return new Lexeme(Types.MINUS);
+            case '*': return new Lexeme(Types.TIMES);
+            case '/': return new Lexeme(Types.DIVIDE);
+            case '(': return new Lexeme(Types.OPAREN);
+            case ')': return new Lexeme(Types.CPAREN);
+            default:
+                if (Character.isDigit(ch)) {
+                    input.unread(ch);
+                    return lexNumber();
+                } else if (Character.isLetter(ch)) {
+                    input.unread(ch);
+                    return lexVariableOrKeyword();
+                } else {
+                    System.out.println("Unknown character encountered while lexing: " + ch);
+                    return new Lexeme(Types.UNKNOWN);
+                }
+        }
     }
 
     private void skipWhiteSpace() {

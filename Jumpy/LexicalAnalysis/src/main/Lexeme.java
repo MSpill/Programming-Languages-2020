@@ -1,8 +1,8 @@
 class Lexeme {
-    Types type;
-    String string;
-    Integer integer;
-    Double real;
+    private Types type;
+    private String string;
+    private Integer integer;
+    private Double real;
 
     Lexeme(Types t) {
         this.type = t;
