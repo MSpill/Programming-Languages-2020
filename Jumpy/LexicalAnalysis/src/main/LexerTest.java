@@ -6,11 +6,11 @@ class LexerTest {
 
     public static void main(String[] args) {
         Lexer lexer = new Lexer(srcDir + "/test1.txt");
-        /*
-         * try { Lexeme lexeme = lexer.lex(); while (lexeme.getType() !=
-         * Type.END_OF_INPUT) { System.out.println(lexeme); lexeme = lexer.lex(); } }
-         * catch (IOException e) { System.out.println("Error while lexing: " + e); }
-         */
+        try {
+            lexer.lex();
+        } catch (IOException e) {
+            System.out.println("Error while lexing: " + e);
+        }
     }
 
 }

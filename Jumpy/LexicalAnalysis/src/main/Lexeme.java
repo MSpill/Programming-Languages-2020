@@ -1,18 +1,27 @@
 class Lexeme {
-    Type type;
+    Types type;
     String string;
-    int integer;
-    double real;
+    Integer integer;
+    Double real;
 
-    Lexeme(Type t) {
+    Lexeme(Types t) {
         this.type = t;
     }
 
-    Type getType() {
+    Types getType() {
         return this.type;
     }
-}
 
-enum Type {
-    END_OF_INPUT,
+    public String toString() {
+        if (string != null) {
+            return getType() + " " + string;
+        }
+        if (integer != null) {
+            return getType() + " " + integer;
+        }
+        if (real != null) {
+            return getType() + " " + real;
+        }
+        return getType() + " ";
+    }
 }
