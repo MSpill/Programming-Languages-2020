@@ -15,12 +15,12 @@ class Lexeme {
 
     Lexeme(Types t, int integer) {
         this.type = t;
-        this.integer = new Integer(integer);
+        this.integer = integer;
     }
 
     Lexeme(Types t, double real) {
         this.type = t;
-        this.real = new Double(real);
+        this.real = real;
     }
 
     Types getType() {

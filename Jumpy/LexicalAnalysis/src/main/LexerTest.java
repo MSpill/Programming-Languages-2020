@@ -8,7 +8,7 @@ class LexerTest {
         Lexer lexer = new Lexer(srcDir + "/test1.txt");
         try {
             Lexeme thisLexeme = lexer.lex();
-            while(thisLexeme.getType() != Types.END_OF_INPUT) {
+            while (thisLexeme.getType() != Types.END_OF_INPUT && thisLexeme.getType() != Types.UNKNOWN) {
                 System.out.println(thisLexeme);
                 thisLexeme = lexer.lex();
             }

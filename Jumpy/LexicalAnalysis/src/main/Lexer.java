@@ -21,17 +21,25 @@ class Lexer {
             if (charAsInt == 65535) { // check for end of file
                 return new Lexeme(Types.END_OF_INPUT);
             }
-            char ch = (char)charAsInt;
+            char ch = (char) charAsInt;
 
             switch (ch) {
-                case '\n': return new Lexeme(Types.NEWLINE);
-                case '=': return new Lexeme(Types.EQUALS);
-                case '+': return new Lexeme(Types.PLUS);
-                case '-': return new Lexeme(Types.MINUS);
-                case '*': return new Lexeme(Types.TIMES);
-                case '/': return new Lexeme(Types.DIVIDE);
-                case '(': return new Lexeme(Types.OPAREN);
-                case ')': return new Lexeme(Types.CPAREN);
+                case '\n':
+                    return new Lexeme(Types.NEWLINE);
+                case '=':
+                    return new Lexeme(Types.EQUALS);
+                case '+':
+                    return new Lexeme(Types.PLUS);
+                case '-':
+                    return new Lexeme(Types.MINUS);
+                case '*':
+                    return new Lexeme(Types.TIMES);
+                case '/':
+                    return new Lexeme(Types.DIVIDE);
+                case '(':
+                    return new Lexeme(Types.OPAREN);
+                case ')':
+                    return new Lexeme(Types.CPAREN);
                 default:
                     if (Character.isDigit(ch)) {
                         input.unread(ch);
@@ -40,8 +48,7 @@ class Lexer {
                         input.unread(ch);
                         return lexVariableOrKeyword();
                     } else {
-                        //System.out.println("Unknown character encountered while lexing: " + ch);
-                        return new Lexeme(Types.UNKNOWN);
+                        throw new IOException("Encountered unknown character while lexing: " + ch);
                     }
             }
         } catch (IOException e) {
@@ -53,10 +60,10 @@ class Lexer {
     private Lexeme lexNumber() {
         try {
             String token = "";
-            char ch = (char)input.read();
+            char ch = (char) input.read();
             while (Character.isDigit(ch)) {
                 token = token + ch;
-                ch = (char)input.read();
+                ch = (char) input.read();
             }
 
             input.unread(ch);
@@ -70,24 +77,24 @@ class Lexer {
     private Lexeme lexVariableOrKeyword() {
         try {
             String token = "";
-            char ch = (char)input.read();
+            char ch = (char) input.read();
             while (Character.isDigit(ch) || Character.isLetter(ch)) {
                 token = token + ch;
-                ch = (char)input.read();
+                ch = (char) input.read();
             }
 
             input.unread(ch);
 
             if (token.equals("jmp")) {
-                return new Lexeme (Types.JMP);
+                return new Lexeme(Types.JMP);
             } else if (token.equals("jmpabs")) {
-                return new Lexeme (Types.JMPABS);
+                return new Lexeme(Types.JMPABS);
             } else if (token.equals("println")) {
-                return new Lexeme (Types.PRINTLN);
+                return new Lexeme(Types.PRINTLN);
             } else if (token.equals("int")) {
-                return new Lexeme (Types.INT);
+                return new Lexeme(Types.INT);
             } else {
-                return new Lexeme (Types.VARIABLE, token);
+                return new Lexeme(Types.VARIABLE, token);
             }
         } catch (IOException e) {
             System.out.println("Error while lexing variable/keyword: " + e);
