@@ -15,7 +15,7 @@ This language was developed according to the processes set forth by [Dr. John C.
 4. [Calling Functions](#calling-functions)
 5. [Index of built-ints and keywords](#index)
 
-## Hello, world!
+## Hello, World!
 
 The following program prints `"Hello, world!"` to the console.
 
