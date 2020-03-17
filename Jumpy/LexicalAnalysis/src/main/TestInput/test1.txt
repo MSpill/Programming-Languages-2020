@@ -2,12 +2,13 @@
 int i = 0
 int check = 0
 
+start:
 check = (i/100)
 jmp check*3+1
     println i
     i = i + 1
-    jmp -4
+    jmp "start"
 
-prin
+println 100
 
 H " " ks

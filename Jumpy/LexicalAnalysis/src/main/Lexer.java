@@ -17,11 +17,10 @@ class Lexer {
     Lexeme lex() throws IOException {
         try {
             skipWhiteSpace();
-            int charAsInt = input.read();
-            if (charAsInt == 65535) { // check for end of file
+            char ch = (char) input.read();
+            if (isEOF(ch)) {
                 return new Lexeme(Types.END_OF_INPUT);
             }
-            char ch = (char) charAsInt;
 
             switch (ch) {
                 case '\n':
@@ -40,6 +39,8 @@ class Lexer {
                     return new Lexeme(Types.OPAREN);
                 case ')':
                     return new Lexeme(Types.CPAREN);
+                case ':':
+                    return new Lexeme(Types.COLON);
                 default:
                     if (Character.isDigit(ch)) {
                         input.unread(ch);
@@ -47,6 +48,8 @@ class Lexer {
                     } else if (Character.isLetter(ch)) {
                         input.unread(ch);
                         return lexVariableOrKeyword();
+                    } else if (ch == '\"') {
+                        return lexString();
                     } else {
                         throw new IOException("Encountered unknown character while lexing: " + ch);
                     }
@@ -65,11 +68,32 @@ class Lexer {
                 token = token + ch;
                 ch = (char) input.read();
             }
-
             input.unread(ch);
-            return new Lexeme(Types.NUMBER, Integer.parseInt(token));
+            return new Lexeme(Types.INTEGER, Integer.parseInt(token));
         } catch (IOException e) {
             System.out.println("Error while lexing number: " + e);
+            return new Lexeme(Types.UNKNOWN);
+        }
+    }
+
+    private Lexeme lexString() {
+        try {
+            String token = "";
+            char ch = (char) input.read();
+            if (isEOF(ch)) {
+                throw new IOException("Found EOF when expecting end of string");
+            }
+            while (ch != '\"') {
+                token = token + ch;
+                ch = (char) input.read();
+                if (isEOF(ch)) {
+                    throw new IOException("Found EOF when expecting end of string");
+                }
+            }
+
+            return new Lexeme(Types.STRING, token);
+        } catch (IOException e) {
+            System.out.println("Error while lexing variable/keyword: " + e);
             return new Lexeme(Types.UNKNOWN);
         }
     }
@@ -87,12 +111,12 @@ class Lexer {
 
             if (token.equals("jmp")) {
                 return new Lexeme(Types.JMP);
-            } else if (token.equals("jmpabs")) {
-                return new Lexeme(Types.JMPABS);
             } else if (token.equals("println")) {
                 return new Lexeme(Types.PRINTLN);
             } else if (token.equals("int")) {
-                return new Lexeme(Types.INT);
+                return new Lexeme(Types.INTTYPE);
+            } else if (token.equals("str")) {
+                return new Lexeme(Types.STRINGTYPE);
             } else {
                 return new Lexeme(Types.VARIABLE, token);
             }
@@ -122,6 +146,15 @@ class Lexer {
     private boolean isWhiteSpace(char ch) {
         // newlines are part of my language's grammar, so aren't skipped
         if (ch == ' ' || ch == '\t') {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean isEOF(char ch) {
+        int charAsInt = (int) ch;
+        if (charAsInt == 65535) { // check for end of file
             return true;
         } else {
             return false;

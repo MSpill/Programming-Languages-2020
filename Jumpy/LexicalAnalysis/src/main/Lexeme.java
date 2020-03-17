@@ -29,6 +29,9 @@ class Lexeme {
 
     public String toString() {
         if (string != null) {
+            if (getType() == Types.STRING) {
+                return getType() + " " + "\"" + string + "\"";
+            }
             return getType() + " " + string;
         }
         if (integer != null) {
