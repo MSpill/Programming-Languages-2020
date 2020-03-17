@@ -8,7 +8,7 @@ This language was developed according to the processes set forth by [Dr. John C.
 
 ## Table of Contents
 
-1. [Hello, World!](#hello_world!)
+1. [Hello, World!](#hello-world)
 2. [Defining Variables](#defining-variables)
 3. [Using Jump Statements](#using-jump-statements)
 3. [Creating Functions](#creating-functions)
