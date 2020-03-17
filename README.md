@@ -65,7 +65,7 @@ jmp -1
 
 would create an infinite loop with the variable x having the value n! at loop n.
 
-## Defining functions
+## Creating functions
 
 Jumpy does not support functions in the typical way. Instead, `jmp` statements and markers must be used. To create a function to square the number x, you would use this code:
 
