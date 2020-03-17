@@ -2,7 +2,7 @@
 # Created by Matthew Spillman, Westminster Schools
 # Atlanta, GA
 # Spring 2020
-# The language has no conditional or loop keywords, just jmp x and jmpabs x statements
+# The language has no conditional or loop keywords, just jmp x or jmp str statements which jump the program x lines ahead or to the marker named str
 # which jump the program x lines ahead or to line x.
 # newlines are built in as the terminators of statements
 # I think this would be turing-complete when combining jmp statements with integer division
@@ -10,33 +10,40 @@
 program : optNewLines statementList
 
 statementList   : statement 
-                | statement optNewLines statementList
+                | statement newlines statementList
 
 optNewLines : empty
-            | NEWLINE optNewLines
+            | newLines
+
+newLines    : NEWLINE
+            | NEWLINE newLines
 
 statement   : variableDeclaration 
             | variableAssignment 
-            | jumpStatement 
+            | marker
+            | jumpStatement
             | printStatement
 
 variableDeclaration : variableType variableAssignment
 
-variableAssignment : VARIABLE EQUALS expression NEWLINE
+variableAssignment : VARIABLE EQUALS expression
 
-variableType : INT # may add more
+variableType : INTTYPE
+             | STRINGTYPE # may add more
 
-jumpStatement   : JMP expression NEWLINE 
-                | JMPABS expression NEWLINE
+marker : VARIABLE COLON
 
-printStatement : PRINTLN expression NEWLINE
+jumpStatement   : JMP expression # expression may be a string
+
+printStatement : PRINTLN expression
 
 expression  : unary 
             | unary operator expression
 
 unary   : VARIABLE 
-        | NUMBER 
-        | MINUS unary 
+        | INTEGER
+        | STRING
+        | MINUS unary
         | OPAREN expression CPAREN
 
 operator    : PLUS 
