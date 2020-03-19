@@ -31,14 +31,14 @@ statement   : variableDeclaration
             | printStatement
 
 variableDeclaration : variableType variableAssignment
+                    | arrayType EQUALS arrayInit
 
 variableAssignment : VARIABLE EQUALS expression
 
 variableType : INTTYPE
              | STRINGTYPE
              | FLOATTYPE
-             | BOOLTYPE 
-             | arrayType # may add more
+             | BOOLTYPE
 
 arrayType : variableType OPENCURLY CLOSECURLY
 
@@ -54,12 +54,11 @@ expression  : unary
 
 ternaryExpression : OPAREN expression QUESTIONMARK expression COLON expression CPAREN
 
-unary   : VARIABLE 
+unary   : VARIABLE
         | INTEGER
         | FLOAT
         | STRING
         | BOOLEAN
-        | arrayInit
         | MINUS unary
         | OPAREN expression CPAREN
 
