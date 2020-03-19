@@ -9,8 +9,14 @@
 
 program : optNewLines statementList
 
-statementList   : statement 
-                | statement newlines statementList
+statementList   : optTabs statement 
+                | optTabs statement newlines statementList
+
+optTabs : empty
+        | tabs
+
+tabs : TAB
+     | TAB tabs
 
 optNewLines : empty
             | newLines
@@ -29,7 +35,12 @@ variableDeclaration : variableType variableAssignment
 variableAssignment : VARIABLE EQUALS expression
 
 variableType : INTTYPE
-             | STRINGTYPE # may add more
+             | STRINGTYPE
+             | FLOATTYPE
+             | BOOLTYPE 
+             | arrayType # may add more
+
+arrayType : variableType OPENCURLY CLOSECURLY
 
 marker : VARIABLE COLON
 
@@ -39,17 +50,29 @@ printStatement : PRINTLN expression
 
 expression  : unary 
             | unary operator expression
+            | ternaryExpression
+
+ternaryExpression : OPAREN expression QUESTIONMARK expression COLON expression CPAREN
 
 unary   : VARIABLE 
         | INTEGER
+        | FLOAT
         | STRING
+        | BOOLEAN
+        | arrayInit
         | MINUS unary
         | OPAREN expression CPAREN
 
+arrayInit : variableType OPENCURLY expression CLOSECURLY
+
 operator    : PLUS 
-            | MINUS 
+            | MINUS
             | TIMES 
             | DIVIDE
+            | MODULO
+            | AND
+            | OR
+            | NOT
 
 # Example program to print the numbers from 0 to 99 then print -1
 #1 int i = 0
