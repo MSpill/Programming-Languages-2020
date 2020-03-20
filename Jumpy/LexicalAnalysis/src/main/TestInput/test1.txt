@@ -1,14 +1,31 @@
 
+float{} floatFuncParams = int{0}
+float floatFuncResult = 0
+str funcReturnLocation = ""
+
 int i = 0
 int check = 0
 
 start:
-check = (i/100)
-jmp check*3+1
-    println i
+    check = (i/100)
+    jmp check*3+1
+        println i
+        i = i + 1
+        jmp "start"
+end:
+    println "Done with part 1"
+
+int{} results = int{12}
+float num = 1.3
+i = 0
+
+start2:
+    floatFuncParams = int{2}
+    floatFuncParams @ 0 = num
+    floatFuncParams @ 1 = i
+    funcReturnLocation = "afterMult"
+    jmp "multTwoNumbers"
+afterMult:
+    results @ i = floatFuncResult
     i = i + 1
-    jmp "start"
-
-println 100
-
-H " " ks
+    jmp "start2"

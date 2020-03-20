@@ -66,12 +66,14 @@ arrayInit : variableType OPENCURLY expression CLOSECURLY
 
 operator    : PLUS 
             | MINUS
-            | TIMES 
+            | TIMES
             | DIVIDE
             | MODULO
+            | EQUALTO
             | AND
             | OR
             | NOT
+            | AT
 
 # Example program to print the numbers from 0 to 99 then print -1
 #1 int i = 0

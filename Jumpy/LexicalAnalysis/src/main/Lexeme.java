@@ -2,6 +2,8 @@ class Lexeme {
     private Types type;
     private String string;
     private Integer integer;
+    private boolean bool;
+    private boolean hasBoolVal = false;
     private Double real;
 
     Lexeme(Types t) {
@@ -23,6 +25,12 @@ class Lexeme {
         this.real = real;
     }
 
+    Lexeme(Types t, boolean bool) {
+        this.type = t;
+        this.bool = bool;
+        hasBoolVal = true;
+    }
+
     Types getType() {
         return this.type;
     }
@@ -39,6 +47,9 @@ class Lexeme {
         }
         if (real != null) {
             return getType() + " " + real;
+        }
+        if (hasBoolVal) {
+            return getType() + " " + bool;
         }
         return getType() + " ";
     }
