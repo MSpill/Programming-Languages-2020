@@ -39,6 +39,10 @@ class Lexer {
                     return new Lexeme(Types.DIVIDE);
                 case '%':
                     return new Lexeme(Types.MODULO);
+                case '>':
+                    return new Lexeme(Types.GREATERTHAN);
+                case '<':
+                    return new Lexeme(Types.LESSTHAN);
                 case '@':
                     return new Lexeme(Types.AT);
                 case '?':
