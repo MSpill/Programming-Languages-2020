@@ -1,3 +1,4 @@
+
 enum Types {
     NEWLINE, TAB,
 

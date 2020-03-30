@@ -2,10 +2,10 @@ import java.io.IOException;
 
 class LexerTest {
 
-    private static final String srcDir = "TestInput";
+    private static final String srcFile = "../TestInput/test1.txt";
 
     public static void main(String[] args) {
-        Lexer lexer = new Lexer(srcDir + "/test1.txt");
+        Lexer lexer = new Lexer(srcFile);
         try {
             Lexeme thisLexeme = lexer.lex();
             while (thisLexeme.getType() != Types.END_OF_INPUT && thisLexeme.getType() != Types.UNKNOWN) {

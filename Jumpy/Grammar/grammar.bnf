@@ -3,9 +3,7 @@
 # Atlanta, GA
 # Spring 2020
 # The language has no conditional or loop keywords, just jmp x or jmp str statements which jump the program x lines ahead or to the marker named str
-# which jump the program x lines ahead or to line x.
-# newlines are built in as the terminators of statements
-# I think this would be turing-complete when combining jmp statements with integer division
+# newlines are built in as the terminators of statements, tabs produce blocks and scoping
 
 program : optNewLines statementList
 
