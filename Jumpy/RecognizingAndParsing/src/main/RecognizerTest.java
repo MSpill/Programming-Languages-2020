@@ -1,6 +1,14 @@
+import java.io.IOException;
 
 public class RecognizerTest {
-    public static void main(String[] args) {
 
+    private static final String srcFile = "../TestInput/test1.txt";
+
+    public static void main(String[] args) {
+        try {
+            Recognizer r = new Recognizer(srcFile);
+        } catch (IOException e) {
+            System.out.println("Error while recognizing: " + e);
+        }
     }
 }
