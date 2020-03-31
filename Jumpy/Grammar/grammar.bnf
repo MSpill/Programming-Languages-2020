@@ -23,19 +23,25 @@ newLines    : NEWLINE
             | NEWLINE newLines
 
 statement   : variableDeclaration 
-            | variableAssignmentOrMarker
+            | variableAssignment
+            | arrayIndexAssignment
+            | marker
             | jumpStatement
             | printStatement
 
 variableDeclaration : variableType variableAssignment
 
-variableAssignmentOrMarker : VARIABLE EQUALS expression
-                           | VARIABLE EQUALS arrayInit
-                           | VARIABLE AT expression EQUALS expression
-                           | VARIABLE COLON
+variableAssignment : VARIABLE EQUALS expression
+                   | VARIABLE EQUALS arrayInit
+
+arrayIndexAssignment : VARIABLE AT expression EQUALS expression
+
+marker: VARIABLE COLON
 
 variableType : primitiveType
-             | primitiveType OPENCURLY CLOSECURLY
+             | arrayType
+
+arrayType : primitiveType OPENCURLY CLOSECURLY
 
 primitiveType : INTTYPE
               | STRINGTYPE

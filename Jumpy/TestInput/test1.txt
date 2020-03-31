@@ -1,6 +1,6 @@
 
-float{} floatFuncParams = int{2}
-float floatFuncResult = 0
+float{} floatFuncParams = float{0}
+float floatFuncResult = 0 + (1 - 1)
 str funcReturnLocation = ""
 
 int i = 0
@@ -15,10 +15,10 @@ end:
 
 int{} results = int{12}
 float num = 1.3
-i = 0
+i = 7
 
 start2:
-    floatFuncParams = int{2}
+    floatFuncParams = float{2}
     floatFuncParams @ 0 = num
     floatFuncParams @ 1 = i
     funcReturnLocation = "start2/afterMult"

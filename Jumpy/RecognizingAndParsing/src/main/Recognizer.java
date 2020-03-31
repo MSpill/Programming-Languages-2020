@@ -3,9 +3,11 @@ import java.io.IOException;
 public class Recognizer {
     private Lexer lexer;
     Lexeme currentLexeme;
+    Lexeme nextLexeme;
     private int line = 1;
     Recognizer (String sourcePath) throws IOException {
         lexer = new Lexer(sourcePath);
+        advance();
         advance();
     }
 
@@ -40,8 +42,12 @@ public class Recognizer {
     public void statement() throws IOException {
         if (variableDeclarationPending()) {
             variableDeclaration();
-        } else if (variableAssignmentOrMarkerPending()) {
-            variableAssignmentOrMarker();
+        } else if (variableAssignmentPending()) {
+            variableAssignment();
+        } else if (arrayIndexAssignmentPending()) {
+            arrayIndexAssignment();
+        } else if (markerPending()) {
+            marker();
         } else if (jumpStatementPending()) {
             jumpStatement();
         } else {
@@ -62,44 +68,47 @@ public class Recognizer {
 
     public void variableDeclaration() throws IOException {
         variableType();
-        variableAssignmentOrMarker();
+        variableAssignment();
     }
 
     public boolean variableDeclarationPending() throws IOException {
         return variableTypePending();
     }
 
-    public void variableAssignmentOrMarker() throws IOException {
+    public void variableAssignment() throws IOException {
         match(Types.VARIABLE);
-        if (check(Types.EQUALS)) {
-            match(Types.EQUALS);
-            if (arrayInitPending()) {
-                arrayInit();
-            } else {
-                expression();
-            }
-        } else if (check(Types.AT)) {
-            match(Types.AT);
-            expression();
-            match(Types.EQUALS);
-            expression();
+        match(Types.EQUALS);
+        if (arrayInitPending()) {
+            arrayInit();
         } else {
-            match(Types.COLON);
+            expression();
         }
     }
 
-    public boolean variableAssignmentOrMarkerPending() throws IOException {
-        return check (Types.VARIABLE);
+    public boolean variableAssignmentPending() throws IOException {
+        return check (Types.VARIABLE) && !check2(Types.COLON) && !check2(Types.AT);
     }
 
-    /*public void marker() throws IOException {
+    public void arrayIndexAssignment() throws IOException {
+        match(Types.VARIABLE);
+        match(Types.AT);
+        expression();
+        match(Types.EQUALS);
+        expression();
+    }
+
+    public boolean arrayIndexAssignmentPending() throws IOException {
+        return check(Types.VARIABLE) && check2(Types.AT);
+    }
+
+    public void marker() throws IOException {
         match(Types.VARIABLE);
         match(Types.COLON);
     }
 
     public boolean markerPending() throws IOException {
-        return check(Types.VARIABLE);
-    }*/
+        return check(Types.VARIABLE) && check2(Types.COLON);
+    }
 
     public void jumpStatement() throws IOException {
         match(Types.JMP);
@@ -116,15 +125,29 @@ public class Recognizer {
     }
 
     public void variableType() throws IOException {
-        primitiveType();
-        if (check(Types.OPENCURLY)) {
-            match(Types.OPENCURLY);
-            match(Types.CLOSECURLY);
+        if (arrayTypePending()) {
+            arrayType();
+        } else {
+            primitiveType();
+            if (check(Types.OPENCURLY)) {
+                match(Types.OPENCURLY);
+                match(Types.CLOSECURLY);
+            }
         }
     }
 
     public boolean variableTypePending() throws IOException {
         return primitiveTypePending();
+    }
+
+    public void arrayType() throws IOException {
+        primitiveType();
+        match(Types.OPENCURLY);
+        match(Types.CLOSECURLY);
+    }
+
+    public boolean arrayTypePending() throws IOException {
+        return primitiveTypePending() && check2(Types.OPENCURLY);
     }
 
     public void primitiveType() throws IOException {
@@ -250,9 +273,17 @@ public class Recognizer {
         return currentLexeme.getType() == type;
     }
 
+    // function checks 2 lexemes ahead
+    boolean check2(Types type) {
+        return nextLexeme.getType() == type;
+    }
+
     void advance() throws IOException {
-        currentLexeme = lexer.lex();
-        if (currentLexeme.getType() == Types.NEWLINE) {
+        if (nextLexeme != null) {
+            currentLexeme = nextLexeme;
+        }
+        nextLexeme = lexer.lex();
+        if (currentLexeme != null && currentLexeme.getType() == Types.NEWLINE) {
             line++;
         }
     }
