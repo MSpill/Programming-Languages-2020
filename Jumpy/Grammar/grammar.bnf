@@ -50,7 +50,7 @@ expression  : unary
             | unary operator expression
             | ternaryExpression
 
-ternaryExpression : OPAREN expression QUESTIONMARK expression COLON expression CPAREN
+ternaryExpression : OSQUARE expression QUESTIONMARK expression COLON expression CSQUARE
 
 unary   : VARIABLE
         | INTEGER

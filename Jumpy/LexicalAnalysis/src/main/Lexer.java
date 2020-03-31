@@ -55,6 +55,10 @@ class Lexer {
                     return new Lexeme(Types.OPENCURLY);
                 case '}':
                     return new Lexeme(Types.CLOSECURLY);
+                case '[':
+                    return new Lexeme(Types.OSQUARE);
+                case ']':
+                    return new Lexeme(Types.CSQUARE);
                 case ':':
                     return new Lexeme(Types.COLON);
                 default:
