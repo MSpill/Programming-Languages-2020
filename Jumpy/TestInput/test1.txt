@@ -1,12 +1,12 @@
 
-{}float floatFuncParams = int{0}
+float{} floatFuncParams = int{2}
 float floatFuncResult = 0
 str funcReturnLocation = ""
 
 int i = 0
 
 start:
-    jmp (i > 100 ? "end" : 1)
+    jmp [i > 100 ? "end" : 1]
     println i
     i = i + 1
     jmp "start"
@@ -26,7 +26,7 @@ start2:
     afterMult:
     results @ i = floatFuncResult
     i = i + 1
-    jmp (i > 11 ? "start2" : "end2")
+    jmp [i > 11 ? "start2" : "end2"]
 end2:
     println "Done with part 2"
     jmp endOfProgram

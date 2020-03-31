@@ -40,10 +40,8 @@ public class Recognizer {
     public void statement() throws IOException {
         if (variableDeclarationPending()) {
             variableDeclaration();
-        } else if (variableAssignmentPending()) {
-            variableAssignment();
-        } else if (markerPending()) {
-            marker();
+        } else if (variableAssignmentOrMarkerPending()) {
+            variableAssignmentOrMarker();
         } else if (jumpStatementPending()) {
             jumpStatement();
         } else {
@@ -64,35 +62,44 @@ public class Recognizer {
 
     public void variableDeclaration() throws IOException {
         variableType();
-        variableAssignment();
+        variableAssignmentOrMarker();
     }
 
     public boolean variableDeclarationPending() throws IOException {
         return variableTypePending();
     }
 
-    public void variableAssignment() throws IOException {
+    public void variableAssignmentOrMarker() throws IOException {
         match(Types.VARIABLE);
-        match(Types.EQUALS);
-        if (arrayInitPending()) {
-            arrayInit();
-        } else {
+        if (check(Types.EQUALS)) {
+            match(Types.EQUALS);
+            if (arrayInitPending()) {
+                arrayInit();
+            } else {
+                expression();
+            }
+        } else if (check(Types.AT)) {
+            match(Types.AT);
             expression();
+            match(Types.EQUALS);
+            expression();
+        } else {
+            match(Types.COLON);
         }
     }
 
-    public boolean variableAssignmentPending() throws IOException {
+    public boolean variableAssignmentOrMarkerPending() throws IOException {
         return check (Types.VARIABLE);
     }
 
-    public void marker() throws IOException {
+    /*public void marker() throws IOException {
         match(Types.VARIABLE);
         match(Types.COLON);
     }
 
     public boolean markerPending() throws IOException {
         return check(Types.VARIABLE);
-    }
+    }*/
 
     public void jumpStatement() throws IOException {
         match(Types.JMP);
@@ -109,42 +116,52 @@ public class Recognizer {
     }
 
     public void variableType() throws IOException {
+        primitiveType();
+        if (check(Types.OPENCURLY)) {
+            match(Types.OPENCURLY);
+            match(Types.CLOSECURLY);
+        }
+    }
+
+    public boolean variableTypePending() throws IOException {
+        return primitiveTypePending();
+    }
+
+    public void primitiveType() throws IOException {
         if (check(Types.INTTYPE)) {
             match(Types.INTTYPE);
         } else if (check(Types.STRINGTYPE)) {
             match(Types.STRINGTYPE);
         } else if (check(Types.FLOATTYPE)) {
             match(Types.FLOATTYPE);
-        } else if (check(Types.BOOLTYPE)) {
-            match(Types.BOOLTYPE);
         } else {
-            arrayType();
+            match(Types.BOOLTYPE);
         }
     }
 
-    public boolean variableTypePending() throws IOException {
-        return check(Types.INTTYPE) || check(Types.STRINGTYPE) ||check(Types.FLOATTYPE) ||check(Types.BOOLTYPE) || arrayTypePending();
+    public boolean primitiveTypePending() throws IOException {
+        return check(Types.INTTYPE) || check(Types.STRINGTYPE) ||check(Types.FLOATTYPE) ||check(Types.BOOLTYPE);
     }
 
-    public void arrayType() throws IOException {
+    /*public void arrayType() throws IOException {
+        primitiveType();
         match(Types.OPENCURLY);
         match(Types.CLOSECURLY);
-        variableType();
     }
 
     public boolean arrayTypePending() throws IOException {
-        return check(Types.OPENCURLY);
-    }
+        return primitiveTypePending();
+    }*/
 
     public void arrayInit() throws IOException {
-        variableType();
+        primitiveType();
         match(Types.OPENCURLY);
         expression();
         match(Types.CLOSECURLY);
     }
 
     public boolean arrayInitPending() throws IOException {
-        return variableTypePending();
+        return primitiveTypePending();
     }
 
     public void expression() throws IOException {
