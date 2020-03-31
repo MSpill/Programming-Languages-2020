@@ -166,16 +166,6 @@ public class Recognizer {
         return check(Types.INTTYPE) || check(Types.STRINGTYPE) ||check(Types.FLOATTYPE) ||check(Types.BOOLTYPE);
     }
 
-    /*public void arrayType() throws IOException {
-        primitiveType();
-        match(Types.OPENCURLY);
-        match(Types.CLOSECURLY);
-    }
-
-    public boolean arrayTypePending() throws IOException {
-        return primitiveTypePending();
-    }*/
-
     public void arrayInit() throws IOException {
         primitiveType();
         match(Types.OPENCURLY);
