@@ -1,5 +1,5 @@
 
-float{} floatFuncParams = int{0}
+{}float floatFuncParams = int{0}
 float floatFuncResult = 0
 str funcReturnLocation = ""
 

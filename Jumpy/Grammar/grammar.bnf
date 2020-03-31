@@ -29,16 +29,17 @@ statement   : variableDeclaration
             | printStatement
 
 variableDeclaration : variableType variableAssignment
-                    | arrayType EQUALS arrayInit
 
 variableAssignment : VARIABLE EQUALS expression
+                   | VARIABLE EQUALS arrayInit
 
 variableType : INTTYPE
              | STRINGTYPE
              | FLOATTYPE
              | BOOLTYPE
+             | arrayType
 
-arrayType : variableType OPENCURLY CLOSECURLY
+arrayType : OPENCURLY CLOSECURLY variableType
 
 marker : VARIABLE COLON
 

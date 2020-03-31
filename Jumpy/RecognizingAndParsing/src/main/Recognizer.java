@@ -3,6 +3,7 @@ import java.io.IOException;
 public class Recognizer {
     private Lexer lexer;
     Lexeme currentLexeme;
+    private int line = 1;
     Recognizer (String sourcePath) throws IOException {
         lexer = new Lexer(sourcePath);
         advance();
@@ -62,24 +63,22 @@ public class Recognizer {
     }
 
     public void variableDeclaration() throws IOException {
-        if (arrayTypePending()) {
-            variableType();
-            variableAssignment();
-        } else {
-            arrayType();
-            match(Types.EQUALS);
-            arrayInit();
-        }
+        variableType();
+        variableAssignment();
     }
 
     public boolean variableDeclarationPending() throws IOException {
-        return variableTypePending() || arrayTypePending();
+        return variableTypePending();
     }
 
     public void variableAssignment() throws IOException {
         match(Types.VARIABLE);
         match(Types.EQUALS);
-        expression();
+        if (arrayInitPending()) {
+            arrayInit();
+        } else {
+            expression();
+        }
     }
 
     public boolean variableAssignmentPending() throws IOException {
@@ -116,23 +115,25 @@ public class Recognizer {
             match(Types.STRINGTYPE);
         } else if (check(Types.FLOATTYPE)) {
             match(Types.FLOATTYPE);
-        } else {
+        } else if (check(Types.BOOLTYPE)) {
             match(Types.BOOLTYPE);
+        } else {
+            arrayType();
         }
     }
 
     public boolean variableTypePending() throws IOException {
-        return check(Types.INTTYPE) || check(Types.STRINGTYPE) ||check(Types.FLOATTYPE) ||check(Types.BOOLTYPE);
+        return check(Types.INTTYPE) || check(Types.STRINGTYPE) ||check(Types.FLOATTYPE) ||check(Types.BOOLTYPE) || arrayTypePending();
     }
 
     public void arrayType() throws IOException {
-        variableType();
         match(Types.OPENCURLY);
         match(Types.CLOSECURLY);
+        variableType();
     }
 
     public boolean arrayTypePending() throws IOException {
-        return variableTypePending();
+        return check(Types.OPENCURLY);
     }
 
     public void arrayInit() throws IOException {
@@ -140,6 +141,10 @@ public class Recognizer {
         match(Types.OPENCURLY);
         expression();
         match(Types.CLOSECURLY);
+    }
+
+    public boolean arrayInitPending() throws IOException {
+        return variableTypePending();
     }
 
     public void expression() throws IOException {
@@ -230,6 +235,9 @@ public class Recognizer {
 
     void advance() throws IOException {
         currentLexeme = lexer.lex();
+        if (currentLexeme.getType() == Types.NEWLINE) {
+            line++;
+        }
     }
 
     void match(Types type) throws IOException {
@@ -239,7 +247,7 @@ public class Recognizer {
 
     void matchNoAdvance(Types type) throws IOException {
         if (!check(type)) {
-            throw new IOException("Expected " + type + " but found " + currentLexeme.getType());
+            throw new IOException("Line " + line + ": expected " + type + " but found " + currentLexeme.getType());
         }
     }
 
