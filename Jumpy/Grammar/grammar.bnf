@@ -5,10 +5,11 @@
 # The language has no conditional or loop keywords, just jmp x or jmp str statements which jump the program x lines ahead or to the marker named str
 # newlines are built in as the terminators of statements, tabs produce blocks and scoping
 
-program : optNewLines statementList
+program : optNewLines optStatementList
 
 statementList   : optTabs statement 
                 | optTabs statement newlines statementList
+                | empty
 
 optTabs : empty
         | tabs

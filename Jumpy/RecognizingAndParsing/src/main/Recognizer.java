@@ -13,7 +13,7 @@ public class Recognizer {
 
     public void program() throws IOException {
         optNewLines();
-        statementList();
+        optStatementList();
     }
 
     public void optNewLines() throws IOException {
@@ -23,12 +23,14 @@ public class Recognizer {
         }
     }
 
-    public void statementList() throws IOException {
+    public void optStatementList() throws IOException {
         optTabs();
-        statement();
-        if (newLinesPending()) {
-            newLines();
-            statementList();
+        if (statementPending()) {
+            statement();
+            if (newLinesPending()) {
+                newLines();
+                optStatementList();
+            }
         }
     }
 
@@ -53,6 +55,11 @@ public class Recognizer {
         } else {
             printStatement();
         }
+    }
+
+    public boolean statementPending() throws IOException {
+        return variableDeclarationPending() || variableAssignmentPending() || arrayIndexAssignmentPending() || markerPending() ||
+                jumpStatementPending() || printStatementPending();
     }
 
     public void newLines() throws IOException {
@@ -122,6 +129,10 @@ public class Recognizer {
     public void printStatement() throws IOException {
         match(Types.PRINTLN);
         expression();
+    }
+
+    public boolean printStatementPending() throws IOException {
+        return check(Types.PRINTLN);
     }
 
     public void variableType() throws IOException {
