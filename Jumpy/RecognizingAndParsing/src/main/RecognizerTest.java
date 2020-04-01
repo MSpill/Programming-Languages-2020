@@ -7,7 +7,7 @@ public class RecognizerTest {
     public static void main(String[] args) {
         try {
             Recognizer r = new Recognizer(srcFile);
-            r.program();
+            r.run();
         } catch (IOException e) {
             System.out.println("Error while recognizing: " + e);
         }

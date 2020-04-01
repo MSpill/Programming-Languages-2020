@@ -2,28 +2,35 @@ import java.io.IOException;
 
 public class Recognizer {
     private Lexer lexer;
-    Lexeme currentLexeme;
-    Lexeme nextLexeme;
+    private Lexeme currentLexeme;
+    private Lexeme nextLexeme;
+    private String sourcePath;
     private int line = 1;
     Recognizer (String sourcePath) throws IOException {
+        this.sourcePath = sourcePath;
         lexer = new Lexer(sourcePath);
         advance();
         advance();
     }
 
-    public void program() throws IOException {
+    public void run() throws IOException {
+        System.out.println("Recognizing " + sourcePath);
+        program();
+    }
+
+    private void program() throws IOException {
         optNewLines();
         optStatementList();
     }
 
-    public void optNewLines() throws IOException {
+    private void optNewLines() throws IOException {
         if (check(Types.NEWLINE)) {
             match(Types.NEWLINE);
             optNewLines();
         }
     }
 
-    public void optStatementList() throws IOException {
+    private void optStatementList() throws IOException {
         optTabs();
         if (statementPending()) {
             statement();
@@ -34,14 +41,14 @@ public class Recognizer {
         }
     }
 
-    public void optTabs() throws IOException {
+    private void optTabs() throws IOException {
         if (check(Types.TAB)) {
             match(Types.TAB);
             optNewLines();
         }
     }
 
-    public void statement() throws IOException {
+    private void statement() throws IOException {
         if (variableDeclarationPending()) {
             variableDeclaration();
         } else if (variableAssignmentPending()) {
@@ -57,32 +64,32 @@ public class Recognizer {
         }
     }
 
-    public boolean statementPending() throws IOException {
+    private boolean statementPending() throws IOException {
         return variableDeclarationPending() || variableAssignmentPending() || arrayIndexAssignmentPending() || markerPending() ||
                 jumpStatementPending() || printStatementPending();
     }
 
-    public void newLines() throws IOException {
+    private void newLines() throws IOException {
         match(Types.NEWLINE);
         if (newLinesPending()) {
             newLines();
         }
     }
 
-    public boolean newLinesPending() throws IOException {
+    private boolean newLinesPending() throws IOException {
         return check(Types.NEWLINE);
     }
 
-    public void variableDeclaration() throws IOException {
+    private void variableDeclaration() throws IOException {
         variableType();
         variableAssignment();
     }
 
-    public boolean variableDeclarationPending() throws IOException {
+    private boolean variableDeclarationPending() throws IOException {
         return variableTypePending();
     }
 
-    public void variableAssignment() throws IOException {
+    private void variableAssignment() throws IOException {
         match(Types.VARIABLE);
         match(Types.EQUALS);
         if (arrayInitPending()) {
@@ -92,11 +99,11 @@ public class Recognizer {
         }
     }
 
-    public boolean variableAssignmentPending() throws IOException {
+    private boolean variableAssignmentPending() throws IOException {
         return check (Types.VARIABLE) && !check2(Types.COLON) && !check2(Types.AT);
     }
 
-    public void arrayIndexAssignment() throws IOException {
+    private void arrayIndexAssignment() throws IOException {
         match(Types.VARIABLE);
         match(Types.AT);
         expression();
@@ -104,38 +111,38 @@ public class Recognizer {
         expression();
     }
 
-    public boolean arrayIndexAssignmentPending() throws IOException {
+    private boolean arrayIndexAssignmentPending() throws IOException {
         return check(Types.VARIABLE) && check2(Types.AT);
     }
 
-    public void marker() throws IOException {
+    private void marker() throws IOException {
         match(Types.VARIABLE);
         match(Types.COLON);
     }
 
-    public boolean markerPending() throws IOException {
+    private boolean markerPending() throws IOException {
         return check(Types.VARIABLE) && check2(Types.COLON);
     }
 
-    public void jumpStatement() throws IOException {
+    private void jumpStatement() throws IOException {
         match(Types.JMP);
         expression();
     }
 
-    public boolean jumpStatementPending() throws IOException {
+    private boolean jumpStatementPending() throws IOException {
         return check(Types.JMP);
     }
 
-    public void printStatement() throws IOException {
+    private void printStatement() throws IOException {
         match(Types.PRINTLN);
         expression();
     }
 
-    public boolean printStatementPending() throws IOException {
+    private boolean printStatementPending() throws IOException {
         return check(Types.PRINTLN);
     }
 
-    public void variableType() throws IOException {
+    private void variableType() throws IOException {
         if (arrayTypePending()) {
             arrayType();
         } else {
@@ -147,21 +154,21 @@ public class Recognizer {
         }
     }
 
-    public boolean variableTypePending() throws IOException {
+    private boolean variableTypePending() throws IOException {
         return primitiveTypePending();
     }
 
-    public void arrayType() throws IOException {
+    private void arrayType() throws IOException {
         primitiveType();
         match(Types.OPENCURLY);
         match(Types.CLOSECURLY);
     }
 
-    public boolean arrayTypePending() throws IOException {
+    private boolean arrayTypePending() throws IOException {
         return primitiveTypePending() && check2(Types.OPENCURLY);
     }
 
-    public void primitiveType() throws IOException {
+    private void primitiveType() throws IOException {
         if (check(Types.INTTYPE)) {
             match(Types.INTTYPE);
         } else if (check(Types.STRINGTYPE)) {
@@ -173,22 +180,22 @@ public class Recognizer {
         }
     }
 
-    public boolean primitiveTypePending() throws IOException {
+    private boolean primitiveTypePending() throws IOException {
         return check(Types.INTTYPE) || check(Types.STRINGTYPE) ||check(Types.FLOATTYPE) ||check(Types.BOOLTYPE);
     }
 
-    public void arrayInit() throws IOException {
+    private void arrayInit() throws IOException {
         primitiveType();
         match(Types.OPENCURLY);
         expression();
         match(Types.CLOSECURLY);
     }
 
-    public boolean arrayInitPending() throws IOException {
+    private boolean arrayInitPending() throws IOException {
         return primitiveTypePending();
     }
 
-    public void expression() throws IOException {
+    private void expression() throws IOException {
         if (ternaryExpressionPending()) {
             ternaryExpression();
         } else {
@@ -200,7 +207,7 @@ public class Recognizer {
         }
     }
 
-    public void ternaryExpression() throws IOException {
+    private void ternaryExpression() throws IOException {
         match(Types.OSQUARE);
         expression();
         match(Types.QUESTIONMARK);
@@ -210,11 +217,11 @@ public class Recognizer {
         match(Types.CSQUARE);
     }
 
-    public boolean ternaryExpressionPending() throws IOException {
+    private boolean ternaryExpressionPending() throws IOException {
         return check(Types.OSQUARE);
     }
 
-    public void unary() throws IOException {
+    private void unary() throws IOException {
         if (check(Types.VARIABLE)) {
             match(Types.VARIABLE);
         } else if (check(Types.INTEGER)) {
@@ -235,7 +242,7 @@ public class Recognizer {
         }
     }
 
-    public void operator() throws IOException {
+    private void operator() throws IOException {
         if (check(Types.PLUS)) {
             match(Types.PLUS);
         } else if (check(Types.MINUS)) {
@@ -263,23 +270,23 @@ public class Recognizer {
         }
     }
 
-    public boolean operatorPending() {
+    private boolean operatorPending() {
         return check(Types.PLUS) || check(Types.MINUS) ||check(Types.TIMES) ||check(Types.DIVIDE) ||check(Types.MODULO) ||
         check(Types.EQUALTO) || check(Types.GREATERTHAN) || check(Types.LESSTHAN) || check(Types.AND) || check(Types.OR) ||
                 check(Types.NOT) || check(Types.AT);
     }
 
     // helper functions
-    boolean check(Types type) {
+    private boolean check(Types type) {
         return currentLexeme.getType() == type;
     }
 
     // function checks 2 lexemes ahead
-    boolean check2(Types type) {
+    private boolean check2(Types type) {
         return nextLexeme.getType() == type;
     }
 
-    void advance() throws IOException {
+    private void advance() throws IOException {
         if (nextLexeme != null) {
             currentLexeme = nextLexeme;
         }
@@ -289,12 +296,12 @@ public class Recognizer {
         }
     }
 
-    void match(Types type) throws IOException {
+    private void match(Types type) throws IOException {
         matchNoAdvance(type);
         advance();
     }
 
-    void matchNoAdvance(Types type) throws IOException {
+    private void matchNoAdvance(Types type) throws IOException {
         if (!check(type)) {
             throw new IOException("Line " + line + ": expected " + type + " but found " + currentLexeme.getType());
         }
