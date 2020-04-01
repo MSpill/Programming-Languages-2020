@@ -17,6 +17,7 @@ class Lexer {
     Lexeme lex() throws IOException {
         try {
             skipWhiteSpace();
+            skipComments();
             char ch = (char) input.read();
             if (isEOF(ch)) {
                 return new Lexeme(Types.END_OF_INPUT);
@@ -184,6 +185,22 @@ class Lexer {
             input.unread(ch);
         } catch (IOException e) {
             System.out.println("Error while skipping whitespace: " + e);
+        }
+    }
+
+    private void skipComments() {
+        try {
+            char ch = (char) input.read();
+            if (ch == '|') {
+                ch = (char) input.read();
+                while (ch != '|') {
+                    ch = (char) input.read();
+                }
+            } else {
+                input.unread(ch);
+            }
+        } catch (IOException e) {
+            System.out.println("Error while skipping comment: " + e);
         }
     }
 

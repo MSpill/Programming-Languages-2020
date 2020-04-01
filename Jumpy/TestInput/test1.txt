@@ -1,10 +1,10 @@
-
 float{} floatFuncParams = float{0}
 float floatFuncResult = 0 + (1 - 1)
 str funcReturnLocation = ""
 
 int i = 0
 
+| This part prints the integers from  0 to 99 |
 start:
     jmp [i > 100 ? "end" : 1]
     println i
@@ -13,15 +13,16 @@ start:
 end:
     println "Done with part 1"
 
-int{} results = int{12}
+float{} results = float{12}
 float num = 1.3
-i = 7
+i = 0
 
+| This part saves the first i powers of num into results |
 start2:
     floatFuncParams = float{2}
     floatFuncParams @ 0 = num
     floatFuncParams @ 1 = i
-    funcReturnLocation = "start2/afterMult"
+    funcReturnLocation = "afterMult"
     jmp "multTwoNumbers"
     afterMult:
     results @ i = floatFuncResult
