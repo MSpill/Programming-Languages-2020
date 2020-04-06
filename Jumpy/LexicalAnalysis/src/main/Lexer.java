@@ -112,11 +112,17 @@ class Lexer {
             if (isEOF(ch)) {
                 throw new IOException("Found EOF when expecting end of string");
             }
+            if (ch == '\n') {
+                throw new IOException("Encountered newline when expecting end of string");
+            }
             while (ch != '\"') {
                 token = token + ch;
                 ch = (char) input.read();
                 if (isEOF(ch)) {
                     throw new IOException("Found EOF when expecting end of string");
+                }
+                if (ch == '\n') {
+                    throw new IOException("Encountered newline when expecting end of string");
                 }
             }
 

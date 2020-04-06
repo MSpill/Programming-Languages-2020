@@ -7,9 +7,9 @@
 
 program : optNewLines optStatementList
 
-statementList   : optTabs statement 
-                | optTabs statement newlines statementList
-                | empty
+optStatementList   : optTabs statement optNewLines EOF
+                   | optTabs statement newlines statementList
+                   | empty
 
 optTabs : empty
         | tabs

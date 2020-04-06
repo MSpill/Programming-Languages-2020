@@ -31,10 +31,12 @@ public class Recognizer {
     }
 
     private void optStatementList() throws IOException {
-        optTabs();
-        if (statementPending()) {
+        if (check(Types.END_OF_INPUT)) {
+            match(Types.END_OF_INPUT);
+        } else {
+            optTabs();
             statement();
-            if (newLinesPending()) {
+            if (!check(Types.END_OF_INPUT)) {
                 newLines();
                 optStatementList();
             }
@@ -44,7 +46,7 @@ public class Recognizer {
     private void optTabs() throws IOException {
         if (check(Types.TAB)) {
             match(Types.TAB);
-            optNewLines();
+            optTabs();
         }
     }
 
@@ -147,10 +149,6 @@ public class Recognizer {
             arrayType();
         } else {
             primitiveType();
-            if (check(Types.OPENCURLY)) {
-                match(Types.OPENCURLY);
-                match(Types.CLOSECURLY);
-            }
         }
     }
 
