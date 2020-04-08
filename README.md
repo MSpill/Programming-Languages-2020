@@ -114,4 +114,4 @@ println fncResult @ 0 | should print 9 |
 | `float{}`, `str{}` ... | Array type |
 | `float{size}`, `str{size}` ... | Array constructor |
 | `arr @ n` | The element at position `n` in `arr` |
-| `|` | Begins and ends a comment |
+| ```|``` | Begins and ends a comment |
