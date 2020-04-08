@@ -113,4 +113,4 @@ println fncResult @ 0 | should print 9 |
 | and, or, not | Boolean operators |
 | float{}, str{} ... | Array type |
 | float{size}, str{size} ... | Array constructor |
-
+| arr @ x | The element at position x in arr |
