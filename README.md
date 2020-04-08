@@ -108,9 +108,9 @@ println fncResult @ 0 | should print 9 |
 | Keyword | Functionality |
 | :---: | --- |
 | `int`, `str`, `bool`, `float` | Variable types |
-| `println x` | Prints x to the console on its own line |
+| `println x` | Prints `x` to the console on its own line |
 | `jmp` | Jump statement |
 | `and`, `or`, `not` | Boolean operators |
 | `float{}`, `str{}` ... | Array type |
 | `float{size}`, `str{size}` ... | Array constructor |
-| `arr @ x` | The element at position `x` in `arr` |
+| `arr @ n` | The element at position `n` in `arr` |
