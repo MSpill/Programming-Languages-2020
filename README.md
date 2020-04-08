@@ -10,10 +10,11 @@ This language was developed according to the processes set forth by [Dr. John C.
 
 1. [Hello, World!](#hello-world)
 2. [Defining Variables](#defining-variables)
-3. [Using Jump Statements](#using-jump-statements)
-3. [Creating Functions](#creating-functions)
-4. [Calling Functions](#calling-functions)
-5. [Index of built-ins and keywords](#index-of-built-ins-and-keywords)
+3. [Comments](#comments)
+4. [Using Jump Statements](#using-jump-statements)
+5. [Creating Functions](#creating-functions)
+6. [Calling Functions](#calling-functions)
+7. [Index of built-ins and keywords](#index-of-built-ins-and-keywords)
 
 ## Hello, World!
 
@@ -35,6 +36,15 @@ str myString = "hey there"
 ```
 
 The variable types currently supported are `int`, `str`, `bool` and `float`. The scope of a variable is determined by its level of indentation, much like in Python.
+
+## Comments
+
+Comments are opened and closed using the | (pipe) character.
+```
+int myNum = 3 | this is an integer with the value 3 |
+| Prints the number |
+println myNum
+```
 
 ## Using Jump Statements
 
@@ -93,3 +103,5 @@ afterSquare:
 println fncResult @ 0 | should print 9 |
 ...
 ```
+## Index of Built-ins and Keywords
+
