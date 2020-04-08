@@ -194,12 +194,15 @@ class Lexer {
         }
     }
 
-    private void skipComments() {
+    private void skipComments() throws IOException {
         try {
             char ch = (char) input.read();
             if (ch == '|') {
                 ch = (char) input.read();
                 while (ch != '|') {
+                    if (isEOF(ch)) {
+                        throw new IOException("Found EOF when expecting end of comment");
+                    }
                     ch = (char) input.read();
                 }
             } else {
