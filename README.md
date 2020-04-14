@@ -10,10 +10,11 @@ This language was developed according to the processes set forth by [Dr. John C.
 
 1. [Hello, World!](#hello-world)
 2. [Defining Variables](#defining-variables)
-3. [Using Jump Statements](#using-jump-statements)
-3. [Creating Functions](#creating-functions)
-4. [Calling Functions](#calling-functions)
-5. [Index of built-ins and keywords](#index-of-built-ins-and-keywords)
+3. [Comments](#comments)
+4. [Using Jump Statements](#using-jump-statements)
+5. [Creating Functions](#creating-functions)
+6. [Calling Functions](#calling-functions)
+7. [Index of built-ins and keywords](#index-of-built-ins-and-keywords)
 
 ## Hello, World!
 
@@ -34,7 +35,16 @@ int x = 2+3*5
 str myString = "hey there"
 ```
 
-The only variable types currently supported are `int` and `str` for integers and strings, respectively. Variables have no scope limitations, so they can be accessed anywhere in the program.
+The variable types currently supported are `int`, `str`, `bool` and `float`. The scope of a variable is determined by its level of indentation, much like in Python.
+
+## Comments
+
+Comments are opened and closed using the | (pipe) character.
+```
+int myNum = 3 | this is an integer with the value 3 |
+| Prints the number |
+println myNum
+```
 
 ## Using Jump Statements
 
@@ -45,7 +55,7 @@ addXAndY:
     int result = x + y
 ```
 
-Tabs can be used freely and are ignored by the language. Jump statements allow the program to move execution a certain number of lines forward or backward, or to a marker. To jump to a marker, use the `jmp` keyword followed by the marker's name as a string:
+Tabs can be used to create block structures like in Python. Jump statements allow the program to move execution a certain number of lines forward or backward, or to a marker. To jump to a marker, use the `jmp` keyword followed by the marker's name as a string:
 ```
 jmp "addXAndY"
 ```
@@ -71,19 +81,37 @@ Jumpy does not support functions in the typical way. Instead, `jmp` statements a
 
 ```
 squareX:
-    result = x * x
-    jmp doneWithSquareX
+    fncResult @ 0 = fncArgs @ 0 * fncArgs @ 0
+    jmp fncReturn
 ```
-For this to work, there must already be a variables called `x` and `result`, as well as a string called `doneWithSquareX` which indicates where to jump once the function finishes.
+For this to work, there must already be global arrays called `fncArgs` and `fncResult`, as well as a string called `fncReturn` which indicates where to jump once the function finishes.
 
 ## Calling functions
 
 To call the function `squareX`, you would use this code:
 ```
-int result = 0
-int x = 4
-str doneWithSquareX = "afterSquare"
+float{} fncArgs = float{0}
+float{} fncResult = float{0}
+str fncReturn = ""
+...
+fncArgs = float{1}
+fncResult = float{1}
+fncArgs @ 0 = 3
+fncReturn = "afterSquare"
 jmp "squareX"
 afterSquare:
+println fncResult @ 0 | should print 9 |
 ...
 ```
+## Index of Built-ins and Keywords
+
+| Keyword | Functionality |
+| :---: | --- |
+| `int`, `str`, `bool`, `float` | Variable types |
+| `println x` | Prints `x` to the console on its own line |
+| `jmp` | Jump statement |
+| `and`, `or`, `not` | Boolean operators |
+| `float{}`, `str{}` ... | Array type |
+| `float{size}`, `str{size}` ... | Array constructor |
+| `arr @ n` | The element at position `n` in `arr` |
+| `\|` | Begins and ends a comment |
