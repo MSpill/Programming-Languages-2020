@@ -2,8 +2,10 @@ import java.io.*;
 
 class Lexer {
     private PushbackReader input;
+    private int line;
 
     Lexer(String inputFilePath) {
+        line = 1;
         try {
             System.out.println("Lexing " + inputFilePath);
 
@@ -25,6 +27,7 @@ class Lexer {
 
             switch (ch) {
                 case '\n':
+                    line++;
                     return new Lexeme(Types.NEWLINE);
                 case '\t':
                     return new Lexeme(Types.TAB);
@@ -203,6 +206,9 @@ class Lexer {
                     if (isEOF(ch)) {
                         throw new IOException("Found EOF when expecting end of comment");
                     }
+                    if (ch == '\n') {
+                        line++;
+                    }
                     ch = (char) input.read();
                 }
             } else {
@@ -211,6 +217,10 @@ class Lexer {
         } catch (IOException e) {
             System.out.println("Error while skipping comment: " + e);
         }
+    }
+
+    int getLine() {
+        return line;
     }
 
     private boolean isWhiteSpace(char ch) {

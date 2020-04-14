@@ -5,7 +5,6 @@ public class Recognizer {
     private Lexeme currentLexeme;
     private Lexeme nextLexeme;
     private String sourcePath;
-    private int line = 1;
     Recognizer (String sourcePath) throws IOException {
         this.sourcePath = sourcePath;
         lexer = new Lexer(sourcePath);
@@ -289,9 +288,6 @@ public class Recognizer {
             currentLexeme = nextLexeme;
         }
         nextLexeme = lexer.lex();
-        if (currentLexeme != null && currentLexeme.getType() == Types.NEWLINE) {
-            line++;
-        }
     }
 
     private void match(Types type) throws IOException {
@@ -301,7 +297,7 @@ public class Recognizer {
 
     private void matchNoAdvance(Types type) throws IOException {
         if (!check(type)) {
-            throw new IOException("Line " + line + ": expected " + type + " but found " + currentLexeme.getType());
+            throw new IOException("Line " + lexer.getLine() + ": expected " + type + " but found " + currentLexeme.getType());
         }
     }
 
