@@ -9,7 +9,7 @@ public class RecognizerTest {
             Recognizer r = new Recognizer(srcFile);
             r.run();
         } catch (IOException e) {
-            System.out.println("Error while recognizing: " + e);
+            System.out.println("Recognizer error: " + e);
         }
     }
 }

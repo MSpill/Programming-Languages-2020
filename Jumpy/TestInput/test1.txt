@@ -10,7 +10,7 @@ ya yeet |
 
 | This part prints the integers from  0 to 99 |
 start:
-    jmp [i < 100 ? "end" : 1]
+    jmp [i < 100 ? 1 : "end"]
     println i
     i = i + 1
     jmp "start"
