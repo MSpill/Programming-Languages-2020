@@ -89,29 +89,35 @@ public class Recognizer {
         return check(Types.NEWLINE);
     }
 
-    private void variableDeclaration() throws IOException {
+    private Lexeme variableDeclaration() throws IOException {
         String parentNonTerm = currentNonTerm;
         currentNonTerm = "variable declaration";
-        variableType();
-        variableAssignment();
+        Lexeme variableDec = new Lexeme(Types.VARIABLEDECLARATION);
+        Lexeme varType = variableType();
+        Lexeme varAssign = variableAssignment();
+        variableDec.setLeft(varType);
+        variableDec.setRight(varAssign);
         currentNonTerm = parentNonTerm;
+        return variableDec;
     }
 
     private boolean variableDeclarationPending() throws IOException {
         return variableTypePending();
     }
 
-    private void variableAssignment() throws IOException {
+    private Lexeme variableAssignment() throws IOException {
         String parentNonTerm = currentNonTerm;
         currentNonTerm = "variable assignment";
-        match(Types.VARIABLE);
-        match(Types.EQUALS);
+        Lexeme varName = match(Types.VARIABLE);
+        Lexeme eqSign = match(Types.EQUALS);
+        eqSign.setLeft(varName);
         if (arrayInitPending()) {
-            arrayInit();
+            eqSign.setRight(arrayInit());
         } else {
-            expression();
+            eqSign.setRight(expression());
         }
         currentNonTerm = parentNonTerm;
+        return eqSign;
     }
 
     private boolean variableAssignmentPending() throws IOException {
@@ -169,15 +175,17 @@ public class Recognizer {
         return check(Types.PRINTLN);
     }
 
-    private void variableType() throws IOException {
+    private Lexeme variableType() throws IOException {
         String parentNonTerm = currentNonTerm;
         currentNonTerm = "variable type";
+        Lexeme myType = null;
         if (arrayTypePending()) {
             arrayType();
         } else {
-            primitiveType();
+            myType = primitiveType();
         }
         currentNonTerm = parentNonTerm;
+        return myType;
     }
 
     private boolean variableTypePending() throws IOException {
@@ -197,124 +205,141 @@ public class Recognizer {
         return primitiveTypePending() && check2(Types.OPENCURLY);
     }
 
-    private void primitiveType() throws IOException {
+    private Lexeme primitiveType() throws IOException {
         String parentNonTerm = currentNonTerm;
         currentNonTerm = "primitive variable type";
+        Lexeme myLexeme;
         if (check(Types.INTTYPE)) {
-            match(Types.INTTYPE);
+            myLexeme =  match(Types.INTTYPE);
         } else if (check(Types.STRINGTYPE)) {
-            match(Types.STRINGTYPE);
+            myLexeme =  match(Types.STRINGTYPE);
         } else if (check(Types.FLOATTYPE)) {
-            match(Types.FLOATTYPE);
+            myLexeme =  match(Types.FLOATTYPE);
         } else {
-            match(Types.BOOLTYPE);
+            myLexeme =  match(Types.BOOLTYPE);
         }
         currentNonTerm = parentNonTerm;
+        return myLexeme;
     }
 
     private boolean primitiveTypePending() throws IOException {
         return check(Types.INTTYPE) || check(Types.STRINGTYPE) ||check(Types.FLOATTYPE) ||check(Types.BOOLTYPE);
     }
 
-    private void arrayInit() throws IOException {
+    private Lexeme arrayInit() throws IOException {
         String parentNonTerm = currentNonTerm;
         currentNonTerm = "array initialization";
-        primitiveType();
+        Lexeme arrInit = new Lexeme(Types.ARRAYINIT);
+        arrInit.setLeft(primitiveType());
         match(Types.OPENCURLY);
-        expression();
+        arrInit.setRight(expression());
         match(Types.CLOSECURLY);
         currentNonTerm = parentNonTerm;
+        return arrInit;
     }
 
     private boolean arrayInitPending() throws IOException {
         return primitiveTypePending();
     }
 
-    private void expression() throws IOException {
+    private Lexeme expression() throws IOException {
         String parentNonTerm = currentNonTerm;
         currentNonTerm = "expression";
+        Lexeme parent = null;
         if (ternaryExpressionPending()) {
-            ternaryExpression();
+            parent = ternaryExpression();
         } else {
-            unary();
+            parent = unary();
             if (operatorPending()) {
-                operator();
-                expression();
+                Lexeme tempForUnary = parent;
+                parent = operator();
+                Lexeme exp = expression();
+                parent.setLeft(tempForUnary);
+                parent.setRight(exp);
             }
         }
         currentNonTerm = parentNonTerm;
+        return parent;
     }
 
-    private void ternaryExpression() throws IOException {
+    private Lexeme ternaryExpression() throws IOException {
         String parentNonTerm = currentNonTerm;
         currentNonTerm = "ternary expression";
+        Lexeme parent = new Lexeme (Types.TERNARYEXPRESSION);
         match(Types.OSQUARE);
-        expression();
+        parent.setLeft(expression());
         match(Types.QUESTIONMARK);
-        expression();
+        Lexeme rightChild = new Lexeme(Types.GLUE);
+        rightChild.setLeft(expression());
         match(Types.COLON);
-        expression();
+        rightChild.setRight(expression());
         match(Types.CSQUARE);
+        parent.setRight(rightChild);
         currentNonTerm = parentNonTerm;
+        return parent;
     }
 
     private boolean ternaryExpressionPending() throws IOException {
         return check(Types.OSQUARE);
     }
 
-    private void unary() throws IOException {
+    private Lexeme unary() throws IOException {
         String parentNonTerm = currentNonTerm;
         currentNonTerm = "unary";
+        Lexeme myLexeme = null;
         if (check(Types.VARIABLE)) {
-            match(Types.VARIABLE);
+            myLexeme = match(Types.VARIABLE);
         } else if (check(Types.INTEGER)) {
-            match(Types.INTEGER);
+            myLexeme = match(Types.INTEGER);
         } else if (check(Types.FLOAT)) {
-            match(Types.FLOAT);
+            myLexeme = match(Types.FLOAT);
         } else if (check(Types.STRING)) {
-            match(Types.STRING);
+            myLexeme = match(Types.STRING);
         } else if (check(Types.BOOLEAN)) {
-            match(Types.BOOLEAN);
+            myLexeme = match(Types.BOOLEAN);
         } else if (check(Types.MINUS)) {
-            match(Types.MINUS);
-            unary();
+            myLexeme = match(Types.MINUS);
+            myLexeme.setLeft(unary());
         } else {
             match(Types.OPAREN);
-            expression();
+            myLexeme = expression();
             match(Types.CPAREN);
         }
         currentNonTerm = parentNonTerm;
+        return myLexeme;
     }
 
-    private void operator() throws IOException {
+    private Lexeme operator() throws IOException {
         String parentNonTerm = currentNonTerm;
         currentNonTerm = "operator";
+        Lexeme myLexeme = null;
         if (check(Types.PLUS)) {
-            match(Types.PLUS);
+            myLexeme = match(Types.PLUS);
         } else if (check(Types.MINUS)) {
-            match(Types.MINUS);
+            myLexeme = match(Types.MINUS);
         } else if (check(Types.TIMES)) {
-            match(Types.TIMES);
+            myLexeme = match(Types.TIMES);
         } else if (check(Types.DIVIDE)) {
-            match(Types.DIVIDE);
+            myLexeme = match(Types.DIVIDE);
         } else if (check(Types.MODULO)) {
-            match(Types.MODULO);
+            myLexeme = match(Types.MODULO);
         } else if (check(Types.EQUALTO)) {
-            match(Types.EQUALTO);
+            myLexeme = match(Types.EQUALTO);
         } else if (check(Types.GREATERTHAN)) {
-            match(Types.GREATERTHAN);
+            myLexeme = match(Types.GREATERTHAN);
         } else if (check(Types.LESSTHAN)) {
-            match(Types.LESSTHAN);
+            myLexeme = match(Types.LESSTHAN);
         } else if (check(Types.AND)) {
-            match(Types.AND);
+            myLexeme = match(Types.AND);
         } else if (check(Types.OR)) {
-            match(Types.OR);
+            myLexeme = match(Types.OR);
         } else if (check(Types.NOT)) {
-            match(Types.NOT);
+            myLexeme = match(Types.NOT);
         } else {
-            match(Types.AT);
+            myLexeme = match(Types.AT);
         }
         currentNonTerm = parentNonTerm;
+        return myLexeme;
     }
 
     private boolean operatorPending() {
@@ -340,9 +365,10 @@ public class Recognizer {
         nextLexeme = lexer.lex();
     }
 
-    private void match(Types type) throws IOException {
+    private Lexeme match(Types type) throws IOException {
         matchNoAdvance(type);
         advance();
+        return currentLexeme;
     }
 
     private void matchNoAdvance(Types type) throws IOException {
