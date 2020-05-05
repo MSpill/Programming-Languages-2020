@@ -54,20 +54,22 @@ public class Recognizer {
         }
     }
 
-    private void statement() throws IOException {
+    private Lexeme statement() throws IOException {
+        Lexeme myLexeme = null;
         if (variableDeclarationPending()) {
-            variableDeclaration();
+            myLexeme = variableDeclaration();
         } else if (variableAssignmentPending()) {
-            variableAssignment();
+            myLexeme = variableAssignment();
         } else if (arrayIndexAssignmentPending()) {
-            arrayIndexAssignment();
+            myLexeme = arrayIndexAssignment();
         } else if (markerPending()) {
-            marker();
+            myLexeme = marker();
         } else if (jumpStatementPending()) {
-            jumpStatement();
+            myLexeme = jumpStatement();
         } else {
-            printStatement();
+            myLexeme = printStatement();
         }
+        return myLexeme;
     }
 
     private boolean statementPending() throws IOException {
@@ -98,7 +100,6 @@ public class Recognizer {
         variableDec.setLeft(varType);
         variableDec.setRight(varAssign);
         currentNonTerm = parentNonTerm;
-        variableDec.printTree();
         return variableDec;
     }
 
@@ -125,38 +126,44 @@ public class Recognizer {
         return check (Types.VARIABLE) && !check2(Types.COLON) && !check2(Types.AT);
     }
 
-    private void arrayIndexAssignment() throws IOException {
+    private Lexeme arrayIndexAssignment() throws IOException {
         String parentNonTerm = currentNonTerm;
         currentNonTerm = "array index assignment";
-        match(Types.VARIABLE);
+        Lexeme parent = new Lexeme(Types.ARRAYINDEXASSIGNMENT);
+        parent.setLeft(match(Types.VARIABLE));
         match(Types.AT);
-        expression();
+        Lexeme rightGlue = new Lexeme(Types.GLUE);
+        rightGlue.setLeft(expression());
         match(Types.EQUALS);
-        expression();
+        rightGlue.setRight(expression());
+        parent.setRight(rightGlue);
         currentNonTerm = parentNonTerm;
+        return parent;
     }
 
     private boolean arrayIndexAssignmentPending() throws IOException {
         return check(Types.VARIABLE) && check2(Types.AT);
     }
 
-    private void marker() throws IOException {
+    private Lexeme marker() throws IOException {
         String parentNonTerm = currentNonTerm;
         currentNonTerm = "marker";
-        match(Types.VARIABLE);
+        Lexeme parent = new Lexeme(Types.MARKER);
+        parent.setLeft(match(Types.VARIABLE));
         match(Types.COLON);
         currentNonTerm = parentNonTerm;
+        return parent;
     }
 
     private boolean markerPending() throws IOException {
         return check(Types.VARIABLE) && check2(Types.COLON);
     }
 
-    private void jumpStatement() throws IOException {
+    private Lexeme jumpStatement() throws IOException {
         String parentNonTerm = currentNonTerm;
         currentNonTerm = "jump statement";
-        match(Types.JMP);
-        expression();
+        Lexeme parent = match(Types.JMP);
+        parent.setLeft(expression());
         currentNonTerm = parentNonTerm;
     }
 
@@ -164,12 +171,13 @@ public class Recognizer {
         return check(Types.JMP);
     }
 
-    private void printStatement() throws IOException {
+    private Lexeme printStatement() throws IOException {
         String parentNonTerm = currentNonTerm;
         currentNonTerm = "print statement";
-        match(Types.PRINTLN);
-        expression();
+        Lexeme parent = match(Types.PRINTLN);
+        parent.setLeft(expression());
         currentNonTerm = parentNonTerm;
+        return parent;
     }
 
     private boolean printStatementPending() throws IOException {
