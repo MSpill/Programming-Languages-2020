@@ -98,6 +98,7 @@ public class Recognizer {
         variableDec.setLeft(varType);
         variableDec.setRight(varAssign);
         currentNonTerm = parentNonTerm;
+        variableDec.printTree();
         return variableDec;
     }
 
@@ -180,7 +181,7 @@ public class Recognizer {
         currentNonTerm = "variable type";
         Lexeme myType = null;
         if (arrayTypePending()) {
-            arrayType();
+            myType = arrayType();
         } else {
             myType = primitiveType();
         }
@@ -192,13 +193,15 @@ public class Recognizer {
         return primitiveTypePending();
     }
 
-    private void arrayType() throws IOException {
+    private Lexeme arrayType() throws IOException {
         String parentNonTerm = currentNonTerm;
         currentNonTerm = "array type";
-        primitiveType();
+        Lexeme myLexeme = new Lexeme(Types.ARRAYTYPE);
+        myLexeme.setLeft(primitiveType());
         match(Types.OPENCURLY);
         match(Types.CLOSECURLY);
         currentNonTerm = parentNonTerm;
+        return myLexeme;
     }
 
     private boolean arrayTypePending() throws IOException {
@@ -366,9 +369,10 @@ public class Recognizer {
     }
 
     private Lexeme match(Types type) throws IOException {
+        Lexeme tempLexeme = currentLexeme;
         matchNoAdvance(type);
         advance();
-        return currentLexeme;
+        return tempLexeme;
     }
 
     private void matchNoAdvance(Types type) throws IOException {

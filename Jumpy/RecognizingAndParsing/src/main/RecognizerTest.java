@@ -2,7 +2,7 @@ import java.io.IOException;
 
 public class RecognizerTest {
 
-    private static final String srcFile = "../TestInput/test1.txt";
+    private static final String srcFile = "../TestInput/test1.jmpy";
 
     public static void main(String[] args) {
         try {
