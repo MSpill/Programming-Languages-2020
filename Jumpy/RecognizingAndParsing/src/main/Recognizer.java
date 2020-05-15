@@ -16,12 +16,13 @@ public class Recognizer {
 
     public void run() throws IOException {
         System.out.println("Recognizing " + sourcePath);
-        program();
+        Lexeme parseTree = program();
+        parseTree.printTree();
     }
 
-    private void program() throws IOException {
+    private Lexeme program() throws IOException {
         optNewLines();
-        optStatementList();
+        return optStatementList();
     }
 
     private void optNewLines() throws IOException {
@@ -31,20 +32,23 @@ public class Recognizer {
         }
     }
 
-    private void optStatementList() throws IOException {
+    private Lexeme optStatementList() throws IOException {
         String parentNonTerm = currentNonTerm;
         currentNonTerm = "statements";
+        Lexeme ret = null;
         if (check(Types.END_OF_INPUT)) {
-            match(Types.END_OF_INPUT);
+            ret =  match(Types.END_OF_INPUT);
         } else {
             optTabs();
-            statement();
+            ret = new Lexeme(Types.STATEMENTLIST);
+            ret.setLeft(statement());
             if (!check(Types.END_OF_INPUT)) {
                 newLines();
-                optStatementList();
+                ret.setRight(optStatementList());
             }
         }
         currentNonTerm = parentNonTerm;
+        return ret;
     }
 
     private void optTabs() throws IOException {
@@ -165,6 +169,7 @@ public class Recognizer {
         Lexeme parent = match(Types.JMP);
         parent.setLeft(expression());
         currentNonTerm = parentNonTerm;
+        return parent;
     }
 
     private boolean jumpStatementPending() throws IOException {

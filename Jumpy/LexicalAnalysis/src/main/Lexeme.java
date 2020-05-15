@@ -46,6 +46,42 @@ class Lexeme {
         this.right = child;
     }
 
+    public Lexeme getLeft() {
+        return this.left;
+    }
+
+    public Lexeme getRight() {
+        return this.right;
+    }
+
+    public Lexeme getStringVal() {
+        return this.string;
+    }
+
+    public void printTree() {
+        this.printTreeParams(0, 0);
+    }
+
+    public void printTreeParams(int depth, int posFlag) {
+        String indent = "";
+        for (int i = 0; i < depth; i++) {
+            indent+=" ";
+        }
+        if (posFlag == -1) {
+            System.out.println(indent + "with left child: " + this);
+        } else if (posFlag == 0) {
+            System.out.println(indent + this);
+        } else {
+            System.out.println(indent + "with right child: " + this);
+        }
+        if (left != null) {
+            left.printTreeParams(depth + 2, -1);
+        }
+        if (right != null) {
+            right.printTreeParams(depth + 2, +1);
+        }
+    }
+
     public String toString() {
         if (string != null) {
             if (getType() == Types.STRING) {

@@ -1,0 +1,6 @@
+int i = 0
+str{} myArr = str{2}
+
+myMarker:
+    println i + 1
+    jmp [i > 100 ? 1 : myArr @ 1]
