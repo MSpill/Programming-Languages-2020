@@ -54,7 +54,7 @@ class Lexeme {
         return this.right;
     }
 
-    public Lexeme getStringVal() {
+    public String getStringVal() {
         return this.string;
     }
 

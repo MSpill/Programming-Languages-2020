@@ -1,7 +1,7 @@
 
 
 public class Environments {
-    Lexeme localEnv;
+    private Lexeme localEnv;
     public Environments() {
         localEnv = new Lexeme(Types.ENV);
         localEnv.setRight(new Lexeme(Types.VALUES));
@@ -11,7 +11,7 @@ public class Environments {
         Lexeme env = this.localEnv;
         while (env != null) {
             Lexeme vars = env.getLeft();
-            Lexeme vals = env.getRight();
+            Lexeme vals = env.getRight().getLeft();
             while (vars != null) {
                 if (vars.getLeft().getStringVal().equals(variable)) {
                     return vals.getLeft();
@@ -30,7 +30,7 @@ public class Environments {
         newVars.setRight(this.localEnv.getLeft());
         newVars.setLeft(new Lexeme(Types.VARIABLE, varName));
         Lexeme newVals = new Lexeme(Types.GLUE);
-        newVals.setRight(this.env.getRight().getLeft());
+        newVals.setRight(this.localEnv.getRight().getLeft());
         newVals.setLeft(value);
         this.localEnv.setLeft(newVars);
         this.localEnv.getRight().setLeft(newVals);
@@ -44,5 +44,9 @@ public class Environments {
         newValGlue.setLeft(newVals);
         newValGlue.setRight(temp);
         localEnv.setRight(newValGlue);
+    }
+
+    public void printTree() {
+        localEnv.printTree();
     }
 }
