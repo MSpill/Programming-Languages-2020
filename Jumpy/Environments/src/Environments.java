@@ -7,13 +7,13 @@ public class Environments {
         localEnv.setRight(new Lexeme(Types.VALUES));
     }
 
-    public Lexeme lookup(String variable) {
+    public Lexeme lookup(Lexeme variable) {
         Lexeme env = this.localEnv;
         while (env != null) {
             Lexeme vars = env.getLeft();
             Lexeme vals = env.getRight().getLeft();
             while (vars != null) {
-                if (vars.getLeft().getStringVal().equals(variable)) {
+                if (vars.getLeft().getStringVal().equals(variable.getStringVal())) {
                     return vals.getLeft();
                 }
                 vars = vars.getRight();
@@ -25,10 +25,10 @@ public class Environments {
         return null;
     }
 
-    public void insert(String varName, Lexeme value) {
+    public void insert(Lexeme variable, Lexeme value) {
         Lexeme newVars = new Lexeme(Types.GLUE);
         newVars.setRight(this.localEnv.getLeft());
-        newVars.setLeft(new Lexeme(Types.VARIABLE, varName));
+        newVars.setLeft(variable);
         Lexeme newVals = new Lexeme(Types.GLUE);
         newVals.setRight(this.localEnv.getRight().getLeft());
         newVals.setLeft(value);

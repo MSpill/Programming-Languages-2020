@@ -14,10 +14,10 @@ public class Recognizer {
         currentNonTerm = "program";
     }
 
-    public void run() throws IOException {
+    public Lexeme run() throws IOException {
         System.out.println("Recognizing " + sourcePath);
         Lexeme parseTree = program();
-        parseTree.printTree();
+        return parseTree;
     }
 
     private Lexeme program() throws IOException {
