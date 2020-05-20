@@ -5,12 +5,13 @@ class Lexeme {
     private boolean bool;
     private boolean hasBoolVal = false;
     private Double real;
-    private Lexeme left, right;
+    private Lexeme left, right, parent;
 
     Lexeme(Types t) {
         this.type = t;
         this.left = null;
         this.right = null;
+        this.parent = null;
     }
 
     Lexeme(Types t, String string) {
@@ -39,11 +40,21 @@ class Lexeme {
     }
 
     public void setLeft(Lexeme child) {
+        if (child != null) {
+            child.setParent(this);
+        }
         this.left = child;
     }
 
     public void setRight(Lexeme child) {
+        if (child != null) {
+            child.setParent(this);
+        }
         this.right = child;
+    }
+
+    public void setParent(Lexeme par) {
+        this.parent = par;
     }
 
     public Lexeme getLeft() {
@@ -52,6 +63,10 @@ class Lexeme {
 
     public Lexeme getRight() {
         return this.right;
+    }
+
+    public Lexeme getParent() {
+        return this.parent;
     }
 
     public String getStringVal() {

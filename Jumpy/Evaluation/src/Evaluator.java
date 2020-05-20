@@ -5,8 +5,14 @@ public class Evaluator {
         addMarkers(tree, env);
         while (tree != null) {
             if (tree.getLeft().getType() == Types.JMP) {
-                Lexeme markerName = eval(tree.getLeft().getLeft(), env);
-                tree = env.lookup(new Lexeme(Types.VARIABLE, markerName.getStringVal()));
+                Lexeme expression = eval(tree.getLeft().getLeft(), env);
+                if (expression.getType() == Types.STRING) {
+                    tree = env.lookup(new Lexeme(Types.VARIABLE, expression.getStringVal()));
+                } else if (expression.getType() == Types.INTEGER) {
+                    tree = jumpByInteger(tree, expression.getIntVal());
+                } else {
+                    System.out.println("Only valid inputs to jmp are str and int");
+                }
             } else {
                 eval(tree.getLeft(), env);
                 tree = tree.getRight();
@@ -14,7 +20,7 @@ public class Evaluator {
         }
     }
 
-    public void addMarkers(Lexeme tree, Environments env) {
+    private void addMarkers(Lexeme tree, Environments env) {
         if (tree.getType() == Types.STATEMENTLIST) {
             if (tree.getLeft().getType() == Types.MARKER) {
                 // variable name is marker name, value is parse tree of all subsequent statements
@@ -27,7 +33,21 @@ public class Evaluator {
         }
     }
 
-    public Lexeme eval(Lexeme tree, Environments env) {
+    private Lexeme jumpByInteger(Lexeme statement, int jump) {
+        int i = jump;
+        while (i != 0) {
+            if (i < 0) {
+                statement = statement.getParent();
+                i++;
+            } else {
+                statement = statement.getRight();
+                i--;
+            }
+        }
+        return statement;
+    }
+
+    private Lexeme eval(Lexeme tree, Environments env) {
         if (tree == null) {
             return null;
         }
