@@ -3,7 +3,15 @@ public class Evaluator {
     public void run(Lexeme tree) {
         Environments env = new Environments();
         addMarkers(tree, env);
-        eval(tree, env);
+        while (tree != null) {
+            if (tree.getLeft().getType() == Types.JMP) {
+                Lexeme markerName = eval(tree.getLeft().getLeft(), env);
+                tree = env.lookup(new Lexeme(Types.VARIABLE, markerName.getStringVal()));
+            } else {
+                eval(tree.getLeft(), env);
+                tree = tree.getRight();
+            }
+        }
     }
 
     public void addMarkers(Lexeme tree, Environments env) {
@@ -24,14 +32,6 @@ public class Evaluator {
             return null;
         }
         switch (tree.getType()) {
-
-            case STATEMENTLIST:
-                //System.out.println("Evaluating " + tree.getLeft().getType());
-                eval(tree.getLeft(), env);
-                // if it jumped to other code it shouldn't continue down this path
-                if (tree.getLeft().getType() != Types.JMP) {
-                    return eval(tree.getRight(), env);
-                }
 
             case INTEGER:
             case FLOAT:
@@ -64,7 +64,8 @@ public class Evaluator {
             // already handled in addMarkers
             // case MARKER: return evalMarker(tree, env);
 
-            case JMP: return evalJumpStatement(tree, env);
+            // handled separately in run()
+            // case JMP: return evalJumpStatement(tree, env);
 
         }
         return null;
