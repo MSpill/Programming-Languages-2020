@@ -35,7 +35,7 @@ int x = 2+3*5
 str myString = "hey there"
 ```
 
-The variable types currently supported are `int`, `str`, `bool` and `float`. The scope of a variable is determined by its level of indentation, much like in Python.
+The variable types currently supported are `int`, `str`, `bool` and `float`. Currently, all variables are global in scope so can be accessed from anywhere in the program. Also note that Jumpy does not follow the order of operations and evaluates all expressions from right to left.
 
 ## Comments
 
@@ -55,7 +55,7 @@ addXAndY:
     int result = x + y
 ```
 
-Tabs can be used to create block structures like in Python. Jump statements allow the program to move execution a certain number of lines forward or backward, or to a marker. To jump to a marker, use the `jmp` keyword followed by the marker's name as a string:
+Tabs can be used to organize code into blocks, although scope is not changed. Jump statements allow the program to move execution to a marker. To jump to a marker, use the `jmp` keyword followed by the marker's name as a string:
 ```
 jmp "addXAndY"
 ```
@@ -65,15 +65,6 @@ This also works with variables and expressions:
 str myString = "addXAndY"
 jmp myString
 ```
-
-If you pass an integer to the `jmp` keyword, it will jump that many lines ahead. For example, the code
-```
-int x = 1
-x = x * (x+1)
-jmp -1
-```
-
-would create an infinite loop with the variable x having the value n! at loop n.
 
 ## Creating functions
 
@@ -115,3 +106,5 @@ println fncResult @ 0 | should print 9 |
 | `float{size}`, `str{size}` ... | Array constructor |
 | `arr @ n` | The element at position `n` in `arr` |
 | `\|` | Begins and ends a comment |
+
+*Arrays have not been added yet
