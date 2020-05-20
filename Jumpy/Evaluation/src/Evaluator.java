@@ -28,7 +28,10 @@ public class Evaluator {
             case STATEMENTLIST:
                 //System.out.println("Evaluating " + tree.getLeft().getType());
                 eval(tree.getLeft(), env);
-                return eval(tree.getRight(), env);
+                // if it jumped to other code it shouldn't continue down this path
+                if (tree.getLeft().getType() != Types.JMP) {
+                    return eval(tree.getRight(), env);
+                }
 
             case INTEGER:
             case FLOAT:
