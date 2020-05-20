@@ -58,6 +58,27 @@ class Lexeme {
         return this.string;
     }
 
+    public int getIntVal() {
+        return this.integer;
+    }
+
+    public double getDoubleVal() {
+        if (real != null) {
+            return real;
+        } else {
+            return integer + 0.0;
+        }
+    }
+
+    public boolean getBoolVal() {
+        if (hasBoolVal) {
+            return bool;
+        } else {
+            System.out.println("Requested bool val from non-bool lexeme");
+            return false;
+        }
+    }
+
     public void printTree() {
         this.printTreeParams(0, 0);
     }
