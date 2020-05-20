@@ -36,12 +36,17 @@ public class Evaluator {
     private Lexeme jumpByInteger(Lexeme statement, int jump) {
         int i = jump;
         while (i != 0) {
-            if (i < 0) {
-                statement = statement.getParent();
-                i++;
+            if (statement == null) {
+                System.out.println("Jump statement tried to jump outside of program");
+                return null;
             } else {
-                statement = statement.getRight();
-                i--;
+                if (i < 0) {
+                    statement = statement.getParent();
+                    i++;
+                } else {
+                    statement = statement.getRight();
+                    i--;
+                }
             }
         }
         return statement;
