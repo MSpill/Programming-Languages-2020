@@ -11,10 +11,12 @@ public class Evaluator {
                 } else if (expression.getType() == Types.INTEGER) {
                     tree = jumpByInteger(tree, expression.getIntVal());
                 } else {
-                    System.out.println("Only valid inputs to jmp are str and int");
+                    System.out.println("Only valid inputs to jmp are str, int, and markerName");
                 }
             } else {
-                eval(tree.getLeft(), env);
+                if (tree.getLeft().getType() != Types.MARKER) {
+                    eval(tree.getLeft(), env);
+                }
                 tree = tree.getRight();
             }
         }
@@ -36,17 +38,16 @@ public class Evaluator {
     private Lexeme jumpByInteger(Lexeme statement, int jump) {
         int i = jump;
         while (i != 0) {
+            if (i < 0) {
+                statement = statement.getParent();
+                i++;
+            } else {
+                statement = statement.getRight();
+                i--;
+            }
             if (statement == null) {
                 System.out.println("Jump statement tried to jump outside of program");
                 return null;
-            } else {
-                if (i < 0) {
-                    statement = statement.getParent();
-                    i++;
-                } else {
-                    statement = statement.getRight();
-                    i--;
-                }
             }
         }
         return statement;

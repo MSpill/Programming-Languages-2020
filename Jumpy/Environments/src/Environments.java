@@ -28,10 +28,10 @@ public class Environments {
     public void insert(Lexeme variable, Lexeme value) {
         Lexeme newVars = new Lexeme(Types.GLUE);
         newVars.setRight(this.localEnv.getLeft());
-        newVars.setLeft(variable);
+        newVars.setLeftQuiet(variable);
         Lexeme newVals = new Lexeme(Types.GLUE);
         newVals.setRight(this.localEnv.getRight().getLeft());
-        newVals.setLeft(value);
+        newVals.setLeftQuiet(value);
         this.localEnv.setLeft(newVars);
         this.localEnv.getRight().setLeft(newVals);
     }

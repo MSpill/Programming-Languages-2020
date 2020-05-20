@@ -53,6 +53,14 @@ class Lexeme {
         this.right = child;
     }
 
+    public void setLeftQuiet(Lexeme child) {
+        this.left = child;
+    }
+
+    public void setRightQuiet(Lexeme child) {
+        this.right = child;
+    }
+
     public void setParent(Lexeme par) {
         this.parent = par;
     }
