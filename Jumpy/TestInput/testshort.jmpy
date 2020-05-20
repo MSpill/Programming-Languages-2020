@@ -1,4 +1,5 @@
 int i = ( -1 + 7 ) * 5
+int n = 0
 |str{} myArr = str{2}|
 
 myMarker:
@@ -7,4 +8,10 @@ myMarker:
     jmp [i > 70 ? "end" : "myMarker"]
 
 end:
-    println("done")
+    println "round done"
+    n = n + 1
+    i = 60
+    jmp [n > 3 ? "realend" : "myMarker"]
+
+realend:
+    println "done"
