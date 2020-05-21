@@ -183,6 +183,9 @@ public class Evaluator {
             case MODULO: return evalModulo(tree, env);
             case GREATERTHAN: return evalGreaterThan(tree, env);
             case LESSTHAN: return evalLessThan(tree, env);
+            case NOT: return evalNot(tree, env);
+            case AT: return evalAt(tree, env);
+            case EQUALTO: return evalEqualTo(tree, env);
             // implement others
         }
         return null;
@@ -256,5 +259,20 @@ public class Evaluator {
         Lexeme left = eval(tree.getLeft(), env);
         Lexeme right = eval(tree.getRight(), env);
         return new Lexeme(Types.BOOLEAN, left.getDoubleVal() < right.getDoubleVal()); // getDoubleVal() uses intVal if present
+    }
+
+    private Lexeme evalEqualTo(Lexeme tree, Environments env) {
+        Lexeme left = eval(tree.getLeft(), env);
+        Lexeme right = eval(tree.getRight(), env);
+        return new Lexeme(Types.BOOLEAN, left.getDoubleVal() == right.getDoubleVal()); // getDoubleVal() uses intVal if present
+    }
+
+    private Lexeme evalNot(Lexeme tree, Environments env) {
+        Lexeme left = eval(tree.getLeft(), env);
+        return new Lexeme(Types.BOOLEAN, !left.getBoolVal());
+    }
+
+    private Lexeme evalAt(Lexeme tree, Environments env) {
+        return  null;
     }
 }

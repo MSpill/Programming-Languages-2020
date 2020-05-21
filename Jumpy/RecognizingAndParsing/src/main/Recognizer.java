@@ -316,6 +316,9 @@ public class Recognizer {
         } else if (check(Types.MINUS)) {
             myLexeme = match(Types.MINUS);
             myLexeme.setLeft(unary());
+        } else if (check(Types.NOT)) {
+            myLexeme = match(Types.NOT);
+            myLexeme.setLeft(unary());
         } else {
             match(Types.OPAREN);
             myLexeme = expression();

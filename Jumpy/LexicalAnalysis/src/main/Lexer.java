@@ -31,8 +31,6 @@ class Lexer {
                     return new Lexeme(Types.NEWLINE);
                 case '\t':
                     return new Lexeme(Types.TAB);
-                case '=':
-                    return new Lexeme(Types.EQUALS);
                 case '+':
                     return new Lexeme(Types.PLUS);
                 case '-':
@@ -69,7 +67,7 @@ class Lexer {
                     if (Character.isDigit(ch)) {
                         input.unread(ch);
                         return lexNumber();
-                    } else if (Character.isLetter(ch)) {
+                    } else if (Character.isLetter(ch) || ch == '=') {
                         input.unread(ch);
                         return lexVariableOrKeyword();
                     } else if (ch == '\"') {
@@ -140,7 +138,7 @@ class Lexer {
         try {
             String token = "";
             char ch = (char) input.read();
-            while (Character.isDigit(ch) || Character.isLetter(ch)) {
+            while (Character.isDigit(ch) || Character.isLetter(ch) || ch == '=') {
                 token = token + ch;
                 ch = (char) input.read();
             }
@@ -171,6 +169,8 @@ class Lexer {
                 return new Lexeme(Types.NOT);
             } else if (token.equals("==")) {
                 return new Lexeme(Types.EQUALTO);
+            } else if (token.equals("=")) {
+                return new Lexeme(Types.EQUALS);
             } else {
                 return new Lexeme(Types.VARIABLE, token);
             }
