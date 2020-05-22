@@ -6,7 +6,6 @@ public class EvaluatorTest {
         try {
             Recognizer recognizer = new Recognizer(testFile);
             Lexeme parseTree = recognizer.run();
-            parseTree.printTree();
             evaluator = new Evaluator();
             evaluator.run(parseTree);
         } catch (Exception e) {
