@@ -1,3 +1,5 @@
+import java.lang.reflect.Array;
+
 class Lexeme {
     private Types type;
     private String string;
@@ -5,6 +7,10 @@ class Lexeme {
     private boolean bool;
     private boolean hasBoolVal = false;
     private Double real;
+    private String[] stringArr;
+    private Integer[] intArr;
+    private Boolean[] boolArr;
+    private Double[] realArr;
     private Lexeme left, right, parent;
 
     Lexeme(Types t) {
@@ -33,6 +39,26 @@ class Lexeme {
         this.type = t;
         this.bool = bool;
         hasBoolVal = true;
+    }
+
+    Lexeme(Types t, String[] stringArr) {
+        this.type = t;
+        this.stringArr = stringArr;
+    }
+
+    Lexeme(Types t, Integer[] intArr) {
+        this.type = t;
+        this.intArr = intArr;
+    }
+
+    Lexeme(Types t, Boolean[] boolArr) {
+        this.type = t;
+        this.boolArr = boolArr;
+    }
+
+    Lexeme(Types t, Double[] realArr) {
+        this.type = t;
+        this.realArr = realArr;
     }
 
     Types getType() {
@@ -100,6 +126,51 @@ class Lexeme {
             System.out.println("Requested bool val from non-bool lexeme");
             return false;
         }
+    }
+
+    public String[] getStringArr() {
+        return this.stringArr;
+    }
+
+    public Integer[] getIntArr() {
+        return this.intArr;
+    }
+
+    public Boolean[] getBoolArr() {
+        return this.boolArr;
+    }
+
+    public Double[] getRealArr() {
+        return this.realArr;
+    }
+
+    public Object[] getAnyArr() {
+        if (this.stringArr != null) {
+            return this.stringArr;
+        } else if (this.intArr != null) {
+            return this.intArr;
+        } else if (this.boolArr != null) {
+            return this.boolArr;
+        } else if (this.realArr != null) {
+            return this.realArr;
+        }
+        return null;
+    }
+
+    public void setStringArr(String[] newArr) {
+        this.stringArr = newArr;
+    }
+
+    public void setIntArr(Integer[] newArr) {
+        this.intArr = newArr;
+    }
+
+    public void setBoolArr(Boolean[] newArr) {
+        this.boolArr = newArr;
+    }
+
+    public void setRealArr(Double[] newArr) {
+        this.realArr = newArr;
     }
 
     public void printTree() {

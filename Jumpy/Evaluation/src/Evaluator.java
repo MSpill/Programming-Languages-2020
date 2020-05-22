@@ -1,5 +1,11 @@
 public class Evaluator {
 
+    private int commandNum = 0;
+
+    public int getCommandNum() {
+        return commandNum;
+    }
+
     public void run(Lexeme tree) {
         Environments env = new Environments();
         addMarkers(tree, env);
@@ -7,13 +13,17 @@ public class Evaluator {
             if (tree.getLeft().getType() == Types.JMP) {
                 Lexeme expression = eval(tree.getLeft().getLeft(), env);
                 if (expression.getType() == Types.STRING) {
-                    tree = env.lookup(new Lexeme(Types.VARIABLE, expression.getStringVal()));
+                    Lexeme jmpCommand = env.lookup(new Lexeme(Types.VARIABLE, expression.getStringVal()));
+                    tree = jmpCommand.getRight();
+                    commandNum = jmpCommand.getLeft().getIntVal();
                 } else if (expression.getType() == Types.INTEGER) {
                     tree = jumpByInteger(tree, expression.getIntVal());
+                    commandNum -= expression.getIntVal();
                 } else {
-                    System.out.println("Only valid inputs to jmp are str, int, and markerName");
+                    System.out.println("Only valid inputs to jmp are str and int");
                 }
             } else {
+                commandNum++;
                 if (tree.getLeft().getType() != Types.MARKER) {
                     eval(tree.getLeft(), env);
                 }
@@ -23,14 +33,18 @@ public class Evaluator {
     }
 
     private void addMarkers(Lexeme tree, Environments env) {
-        if (tree.getType() == Types.STATEMENTLIST) {
-            if (tree.getLeft().getType() == Types.MARKER) {
-                // variable name is marker name, value is parse tree of all subsequent statements
-                env.insert(tree.getLeft().getLeft(), tree.getRight());
-            }
-            Lexeme right = tree.getRight();
-            if (right != null) {
-                addMarkers(right, env);
+        int currCommand = 0;
+        while (tree != null) {
+            currCommand++;
+            if (tree.getType() == Types.STATEMENTLIST) {
+                if (tree.getLeft().getType() == Types.MARKER) {
+                    // variable name is marker name, value is lexeme w/ right child as parse tree of all subsequent statements
+                    Lexeme valInsert = new Lexeme(Types.GLUE);
+                    valInsert.setLeft(new Lexeme(Types.INTEGER, currCommand));
+                    valInsert.setRight(tree.getRight());
+                    env.insert(tree.getLeft().getLeft(), valInsert);
+                }
+                tree = tree.getRight();
             }
         }
     }
@@ -83,7 +97,9 @@ public class Evaluator {
             case OR: return evalShortCircuitOp(tree, env);
 
             case VARIABLEDECLARATION: return evalVariableDeclaration(tree, env);
+            case ARRAYINIT: return evalArrayInit(tree, env);
             case EQUALS: return evalVariableAssignment(tree, env);
+            case ARRAYINDEXASSIGNMENT: return evalIndexAssignment(tree, env);
 
             case PRINTLN: return evalPrintln(tree, env);
 
@@ -135,6 +151,9 @@ public class Evaluator {
         Types varType = tree.getLeft().getType();
         Lexeme variable = tree.getRight().getLeft();
         Lexeme value = eval(tree.getRight().getRight(), env);
+        if (varType == Types.ARRAYTYPE) {
+            varType = tree.getLeft().getLeft().getType();
+        }
         if (value.getType() == Types.INTEGER && varType != Types.INTTYPE
                 || value.getType() == Types.FLOAT && varType != Types.FLOATTYPE
                 || value.getType() == Types.STRING && varType != Types.STRINGTYPE
@@ -146,10 +165,57 @@ public class Evaluator {
         return value;
     }
 
+    private Lexeme evalArrayInit(Lexeme tree, Environments env) {
+        Types type = tree.getLeft().getType();
+        int length = eval(tree.getRight(), env).getIntVal();
+        switch (type) {
+            case STRINGTYPE: return new Lexeme(Types.STRINGARR, new String[length]);
+            case INTTYPE: return new Lexeme(Types.INTARR, new Integer[length]);
+            case BOOLTYPE: return new Lexeme(Types.BOOLARR, new Boolean[length]);
+            case FLOATTYPE: return new Lexeme(Types.FLOATARR, new Double[length]);
+        }
+        return null;
+    }
+
     private Lexeme evalVariableAssignment(Lexeme tree, Environments env) {
         Lexeme variable = tree.getLeft();
         Lexeme value = eval(tree.getRight(), env);
-        env.insert(variable, value);
+        if (env.lookup(variable) != null) {
+            env.insert(variable, value);
+            return value;
+        } else {
+            System.out.println("Error during variable assignment: variable " + variable.getStringVal() + " is not defined");
+            return null;
+        }
+    }
+
+    private Lexeme evalIndexAssignment(Lexeme tree, Environments env) {
+        Lexeme variable = tree.getLeft();
+        int index = tree.getRight().getLeft().getIntVal();
+        Lexeme value = tree.getRight().getRight();
+        Lexeme currArr = env.lookup(variable);
+        switch (currArr.getType()) {
+            case STRINGARR:
+                String[] prevArr = currArr.getStringArr();
+                prevArr[index] = value.getStringVal();
+                currArr.setStringArr(prevArr);
+                break;
+            case INTARR:
+                Integer[] prevArrInt = currArr.getIntArr();
+                prevArrInt[index] = value.getIntVal();
+                currArr.setIntArr(prevArrInt);
+                break;
+            case BOOLARR:
+                Boolean[] prevArrBool = currArr.getBoolArr();
+                prevArrBool[index] = value.getBoolVal();
+                currArr.setBoolArr(prevArrBool);
+                break;
+            case FLOATARR:
+                Double[] prevArrFloat = currArr.getRealArr();
+                prevArrFloat[index] = value.getDoubleVal();
+                currArr.setRealArr(prevArrFloat);
+                break;
+        }
         return value;
     }
 
@@ -164,9 +230,23 @@ public class Evaluator {
             outStr = out.getStringVal() + "";
         } else if (out.getType() == Types.BOOLEAN) {
             outStr = out.getBoolVal() + "";
+        } else {
+            outStr = formatArr(out);
         }
         System.out.println(outStr);
         return out;
+    }
+
+    private String formatArr(Lexeme arr) {
+        Object[] objArr = arr.getAnyArr();
+        String out = arr.getType() + " {";
+        for (int i = 0; i < objArr.length; i++) {
+            out += objArr[i];
+            if ( i < objArr.length - 1) {
+                out += ", ";
+            }
+        }
+        return out + "}";
     }
 
     private Lexeme evalJumpStatement(Lexeme tree, Environments env) {
@@ -273,6 +353,14 @@ public class Evaluator {
     }
 
     private Lexeme evalAt(Lexeme tree, Environments env) {
-        return  null;
+        Lexeme arr = eval(tree.getLeft(), env);
+        int index = eval(tree.getRight(), env).getIntVal();
+        switch (arr.getType()) {
+            case STRINGARR: return new Lexeme(Types.STRING, (arr.getStringArr())[index]);
+            case INTARR: return new Lexeme(Types.INTEGER, (arr.getIntArr())[index]);
+            case BOOLARR: return new Lexeme(Types.BOOLEAN, (arr.getBoolArr())[index]);
+            case FLOATARR: return new Lexeme(Types.FLOAT, (arr.getRealArr())[index]);
+        }
+        return null;
     }
 }

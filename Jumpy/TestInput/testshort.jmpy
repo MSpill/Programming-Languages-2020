@@ -1,6 +1,14 @@
 int i = ( -1 + 7 ) * 5
 int n = 0
-|str{} myArr = str{2}|
+str{} myArr = str{0}
+println myArr
+myArr = str{2}
+println myArr
+myArr @ 0 = "hello"
+println myArr
+myArr @ 1 = "world"
+println myArr
+println myArr @ (2-1)
 
 myMarker:
     println i + 1
@@ -9,6 +17,8 @@ myMarker:
 
 end:
     println "round done"
+    myArr = int{n}
+    println myArr
     n = n + 1
     i = 60
     jmp [n > 3 ? "realend" : "myMarker"]
