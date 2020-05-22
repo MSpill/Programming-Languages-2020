@@ -9,7 +9,11 @@ public class EvaluatorTest {
             evaluator = new Evaluator();
             evaluator.run(parseTree);
         } catch (Exception e) {
-            System.out.println("Runtime error - command " + evaluator.getCommandNum() + ": " + e);
+            if (evaluator != null) {
+                System.out.println("Runtime error - command " + evaluator.getCommandNum() + ": " + e);
+            } else {
+                System.out.println(e);
+            }
         }
     }
 

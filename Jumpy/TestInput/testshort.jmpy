@@ -20,7 +20,7 @@ end1:
 
 int numPows = 12
 float{} results = float{numPows}
-float base = 2.5
+float base = 2.0
 
 | compute the first numPows powers of base |
 powers:
