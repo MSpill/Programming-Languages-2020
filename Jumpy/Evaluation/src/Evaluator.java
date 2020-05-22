@@ -60,7 +60,7 @@ public class Evaluator {
                 i--;
             }
             if (statement == null) {
-                System.out.println("Jump statement tried to jump outside of program");
+                System.out.println("Command " + commandNum + " - Jump statement tried to jump outside of program");
                 return null;
             }
         }
@@ -158,7 +158,7 @@ public class Evaluator {
                 || value.getType() == Types.FLOAT && varType != Types.FLOATTYPE
                 || value.getType() == Types.STRING && varType != Types.STRINGTYPE
                 || value.getType() == Types.BOOLEAN && varType != Types.BOOLTYPE) {
-            System.out.println("Declared type does not match value");
+            System.out.println(variable + ": declared type does not match value");
             return null;
         }
         env.insert(variable, value);
@@ -191,8 +191,8 @@ public class Evaluator {
 
     private Lexeme evalIndexAssignment(Lexeme tree, Environments env) {
         Lexeme variable = tree.getLeft();
-        int index = tree.getRight().getLeft().getIntVal();
-        Lexeme value = tree.getRight().getRight();
+        int index = eval(tree.getRight().getLeft(), env).getIntVal();
+        Lexeme value = eval(tree.getRight().getRight(), env);
         Lexeme currArr = env.lookup(variable);
         switch (currArr.getType()) {
             case STRINGARR:

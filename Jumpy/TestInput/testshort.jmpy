@@ -1,27 +1,44 @@
 int i = ( -1 + 7 ) * 5
 int n = 0
-str{} myArr = str{0}
-println myArr
-myArr = str{2}
-println myArr
+str{} myArr = str{2}
 myArr @ 0 = "hello"
 println myArr
-myArr @ 1 = "world"
-println myArr
-println myArr @ (2-1)
 
 myMarker:
     println i + 1
     i = i + 1
-    jmp [not (i < 70) ? "end" : -3]
+    jmp [not (i < 35) ? "roundend" : -3]
 
-end:
+roundend:
     println "round done"
-    myArr = int{n}
-    println myArr
     n = n + 1
-    i = 60
-    jmp [n > 3 ? "realend" : "myMarker"]
+    i = 32
+    jmp [n > 3 ? "end1" : "myMarker"]
 
-realend:
+end1:
     println "done"
+
+int numPows = 12
+float{} results = float{numPows}
+float base = 2.5
+
+| compute the first numPows powers of base |
+powers:
+    int currPow = 0
+    int i = 0
+    float currVal = 1.0
+    loop:
+        jmp [i > currPow ? "if" : "else"]
+        if:
+            results @ currPow = currVal
+            currPow = currPow + 1
+            i = 0
+            currVal = 1.0
+            jmp [currPow < numPows ? "loop" : "end2"]
+        else:
+            currVal = currVal * base
+            i = i + 1
+            jmp "loop"
+
+end2:
+    println results
