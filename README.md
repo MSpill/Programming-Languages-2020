@@ -65,6 +65,7 @@ This also works with variables and expressions:
 str myString = "addXAndY"
 jmp myString
 ```
+Finally, you can also use `jmp x`, where x evaluates to an integer, to jump `x` statements ahead. A negative value jumps that many statements behind. Note that jumping by a certain number of statements does not consider whitespace.
 
 ## Creating functions
 
@@ -106,5 +107,3 @@ println fncResult @ 0 | should print 9 |
 | `float{size}`, `str{size}` ... | Array constructor |
 | `arr @ n` | The element at position `n` in `arr` |
 | `\|` | Begins and ends a comment |
-
-*Arrays have not been added yet
